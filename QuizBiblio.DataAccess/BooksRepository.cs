@@ -13,8 +13,7 @@ public class BooksRepository
 
     DbSet<Book> Books => _dbContext.Books;
 
-    public BooksRepository(
-        IOptions<BookStoreDatabaseSettings> bookStoreDatabaseSettings, QuizBiblioDbContext dbContext)
+    public BooksRepository(QuizBiblioDbContext dbContext)
     {
 
         _dbContext = dbContext;

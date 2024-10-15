@@ -8,10 +8,8 @@ namespace QuizBiblio.Controllers;
 [Route("api/[controller]")]
 public class BooksController(BooksService booksService) : ControllerBase
 {
-    private readonly BooksService _booksService = booksService;
-
     [HttpGet]
-    public async Task<List<Book>> Get() => await _booksService.GetAsync();
+    public async Task<List<Book>> Get() => await booksService.GetAsync();
 
     //[HttpPost]
     //public async Task<IActionResult> Post(Book newBook)
