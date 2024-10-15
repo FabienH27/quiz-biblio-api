@@ -11,61 +11,45 @@ public class BooksController(BooksService booksService) : ControllerBase
     private readonly BooksService _booksService = booksService;
 
     [HttpGet]
-    public async Task<List<Book>> Get() =>
-        await _booksService.GetAsync();
+    public async Task<List<Book>> Get() => await _booksService.GetAsync();
 
-    [HttpGet("{id:length(24)}")]
-    public async Task<ActionResult<Book>> Get(string id)
-    {
-        var book = await _booksService.GetAsync(id);
+    //[HttpPost]
+    //public async Task<IActionResult> Post(Book newBook)
+    //{
+    //    await _booksService.CreateAsync(newBook);
 
-        if (book is null)
-        {
-            return NotFound();
-        }
+    //    return CreatedAtAction(nameof(Get), new { id = newBook.Id }, newBook);
+    //}
 
-        return book;
+    //[HttpPut("{id:length(24)}")]
+    //public async Task<IActionResult> Update(string id, Book updatedBook)
+    //{
+    //    var book = await _booksService.GetAsync(id);
 
+    //    if (book is null)
+    //    {
+    //        return NotFound();
+    //    }
 
-    }
+    //    updatedBook.Id = book.Id;
 
-    [HttpPost]
-    public async Task<IActionResult> Post(Book newBook)
-    {
-        await _booksService.CreateAsync(newBook);
+    //    await _booksService.UpdateAsync(id, updatedBook);
 
-        return CreatedAtAction(nameof(Get), new { id = newBook.Id }, newBook);
-    }
+    //    return NoContent();
+    //}
 
-    [HttpPut("{id:length(24)}")]
-    public async Task<IActionResult> Update(string id, Book updatedBook)
-    {
-        var book = await _booksService.GetAsync(id);
+    //[HttpDelete("{id:length(24)}")]
+    //public async Task<IActionResult> Delete(string id)
+    //{
+    //    var book = await _booksService.GetAsync(id);
 
-        if (book is null)
-        {
-            return NotFound();
-        }
+    //    if (book is null)
+    //    {
+    //        return NotFound();
+    //    }
 
-        updatedBook.Id = book.Id;
+    //    await _booksService.RemoveAsync(id);
 
-        await _booksService.UpdateAsync(id, updatedBook);
-
-        return NoContent();
-    }
-
-    [HttpDelete("{id:length(24)}")]
-    public async Task<IActionResult> Delete(string id)
-    {
-        var book = await _booksService.GetAsync(id);
-
-        if (book is null)
-        {
-            return NotFound();
-        }
-
-        await _booksService.RemoveAsync(id);
-
-        return NoContent();
-    }
+    //    return NoContent();
+    //}
 }

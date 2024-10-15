@@ -12,9 +12,9 @@ public static class Startup
 
     public static IServiceCollection AddServices(this IServiceCollection services)
     {
-        //services.AddRepositories();
+        services.AddRepositories();
 
-        services.AddSingleton<BooksService>();
+        services.AddScoped<BooksService>();
 
         return services;
     }

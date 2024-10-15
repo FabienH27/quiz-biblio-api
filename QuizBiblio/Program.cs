@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using MongoDB.Driver;
 using QuizBiblio.DataAccess;
 using QuizBiblio.Models;
 using QuizBiblio.Services;
@@ -14,12 +15,14 @@ builder.Services.Configure<BookStoreDatabaseSettings>(
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddSingleton<BooksService>();
-
 builder.Services.AddControllers();
 
-//builder.Services.AddDbContext<QuizBiblioDbContext>(options =>
-//    options.UseMongoDB(mongoDBSettings.ConnectionString ?? "", mongoDBSettings.DatabaseName ?? ""));
+builder.Services.AddServices();
+
+string? connectionString = builder.Configuration.GetValue<string>("BookStoreDatabase:ConnectionString");
+string? dbName = builder.Configuration.GetValue<string>("BookStoreDatabase:DatabaseName");
+
+builder.Services.AddMongoDB<QuizBiblioDbContext>(connectionString ?? "", dbName ?? "");
 
 var app = builder.Build();
 

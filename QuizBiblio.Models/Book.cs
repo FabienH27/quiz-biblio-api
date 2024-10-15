@@ -4,7 +4,7 @@ using MongoDB.EntityFrameworkCore;
 
 namespace QuizBiblio.Models;
 
-[Collection("books")]
+[Collection("Books")]
 public class Book
 {
     [BsonId]
