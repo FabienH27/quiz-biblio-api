@@ -17,7 +17,7 @@ public class Quiz
     public List<string> Themes { get; set; } = [];
 
     [BsonElement("imageId")]
-    public required string ImageId { get; set; }
+    public string? ImageId { get; set; }
 
     [BsonElement("questions")]
     public List<Question> Questions { get; set; } = [];

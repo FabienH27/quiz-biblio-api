@@ -13,5 +13,5 @@ public class Option
     public string Text { get; set; } = string.Empty;
 
     [BsonElement("imageId")]
-    public required string ImageId { get; set; }
+    public string ImageId { get; set; } = string.Empty;
 }

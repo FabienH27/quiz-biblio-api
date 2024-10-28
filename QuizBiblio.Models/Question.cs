@@ -13,10 +13,10 @@ public class Question
     public string Explanation { get; set; } = string.Empty;
 
     [BsonElement("imageId")]
-    public required string ImageId { get; set; }
+    public string? ImageId { get; set; }
 
-    [BsonElement("answer")]
-    public int CorrectAnswerIndex { get; set; }
+    [BsonElement("correctAnswerIndex")]
+    public List<int> correctAnswerIndex { get; set; } = [];
 
     [BsonElement("options")]
     public List<Option> Options { get; set; } = [];
