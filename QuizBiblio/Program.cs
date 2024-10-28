@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
 using QuizBiblio.DataAccess;
-using QuizBiblio.Models;
+using QuizBiblio.DatabaseSettings;
 using QuizBiblio.Services;
 
 

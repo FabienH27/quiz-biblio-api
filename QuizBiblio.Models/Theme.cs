@@ -2,7 +2,7 @@
 using MongoDB.Bson;
 using MongoDB.EntityFrameworkCore;
 
-namespace QuizBiblio.Models.Theme;
+namespace QuizBiblio.Models;
 
 [Collection("Themes")]
 public class Theme

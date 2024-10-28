@@ -9,7 +9,7 @@ public class QuizBiblioDbContext(DbContextOptions options) : DbContext(options)
 
     public DbSet<Book> Books { get; init; }
 
-    public DbSet<Models.Quiz.Quiz> Quizzes {  get; init; }  
+    public DbSet<Models.Quiz> Quizzes {  get; init; }  
 
     public static QuizBiblioDbContext Create(IMongoDatabase database) =>
         new(new DbContextOptionsBuilder<QuizBiblioDbContext>()
@@ -22,7 +22,7 @@ public class QuizBiblioDbContext(DbContextOptions options) : DbContext(options)
 
         modelBuilder.Entity<Book>();
 
-        modelBuilder.Entity<Models.Quiz.Quiz>();
+        modelBuilder.Entity<Models.Quiz>();
     }
 
 }

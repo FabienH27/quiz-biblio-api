@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using QuizBiblio.Models;
 using QuizBiblio.Services.Quiz;
 
 namespace QuizBiblio.Controllers;
@@ -8,5 +9,5 @@ namespace QuizBiblio.Controllers;
 public class QuizzesController(IQuizService quizService) : ControllerBase
 {
     [HttpGet]
-    public async Task<List<Models.Quiz.Quiz>> GetQuizzes() => await quizService.GetQuizzesAsync();
+    public async Task<List<Quiz>> GetQuizzes() => await quizService.GetQuizzesAsync();
 }
