@@ -2,7 +2,7 @@
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.EntityFrameworkCore;
 
-namespace QuizBiblio.Models.Quiz;
+namespace QuizBiblio.Models;
 
 [Collection("Quizzes")]
 public class Quiz
@@ -13,6 +13,12 @@ public class Quiz
     [BsonElement("title")]
     public required string Title { get; set; }
 
-    [BsonElement("themeIds")]
-    public List<ObjectId> ThemeIds { get; set; } = [];
+    [BsonElement("themes")]
+    public List<string> Themes { get; set; } = [];
+
+    [BsonElement("imageId")]
+    public string? ImageId { get; set; }
+
+    [BsonElement("questions")]
+    public List<Question> Questions { get; set; } = [];
 }

@@ -1,15 +1,15 @@
 using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
 using QuizBiblio.DataAccess;
-using QuizBiblio.Models;
+using QuizBiblio.DatabaseSettings;
 using QuizBiblio.Services;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.Configure<BookStoreDatabaseSettings>(
-    builder.Configuration.GetSection("BookStoreDatabase"));
+builder.Services.Configure<QuizStoreDatabaseSettings>(
+    builder.Configuration.GetSection("QuizStoreDatabase"));
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -19,8 +19,8 @@ builder.Services.AddControllers();
 
 builder.Services.AddServices();
 
-string? connectionString = builder.Configuration.GetValue<string>("BookStoreDatabase:ConnectionString");
-string? dbName = builder.Configuration.GetValue<string>("BookStoreDatabase:DatabaseName");
+string? connectionString = builder.Configuration.GetValue<string>("QuizStoreDatabase:ConnectionString");
+string? dbName = builder.Configuration.GetValue<string>("QuizStoreDatabase:DatabaseName");
 
 builder.Services.AddMongoDB<QuizBiblioDbContext>(connectionString ?? "", dbName ?? "");
 
