@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using QuizBiblio.Models;
 using QuizBiblio.Services.Quiz;
 
 namespace QuizBiblio.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class QuizzesController(IQuizService quizService) : ControllerBase

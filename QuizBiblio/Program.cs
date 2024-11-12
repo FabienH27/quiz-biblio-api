@@ -1,28 +1,59 @@
-using Microsoft.EntityFrameworkCore;
-using MongoDB.Driver;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using QuizBiblio.DataAccess;
 using QuizBiblio.DatabaseSettings;
 using QuizBiblio.Services;
-
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using QuizBiblio;
+using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var configuration = builder.Configuration;
+
+//shortcut
+var services = builder.Services;
+
+string? connectionString = configuration.GetValue<string>("QuizStoreDatabase:ConnectionString");
+string? dbName = configuration.GetValue<string>("QuizStoreDatabase:DatabaseName");
+
+var jwtSettings = configuration.GetSection("JwtSettings");
+var secretKey = jwtSettings["Secret"];
+
 // Add services to the container.
-builder.Services.Configure<QuizStoreDatabaseSettings>(
-    builder.Configuration.GetSection("QuizStoreDatabase"));
+services.Configure<QuizStoreDatabaseSettings>(
+    configuration.GetSection("QuizStoreDatabase"));
+
+services.Configure<JwtSettings>(jwtSettings);
+
+services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtSettings["Issuer"],
+        ValidAudience = jwtSettings["Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
+    };
+});
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+services.AddEndpointsApiExplorer();
+services.AddSwaggerGen();
 
-builder.Services.AddControllers();
+services.AddControllers();
 
-builder.Services.AddServices();
+services.AddServices();
 
-string? connectionString = builder.Configuration.GetValue<string>("QuizStoreDatabase:ConnectionString");
-string? dbName = builder.Configuration.GetValue<string>("QuizStoreDatabase:DatabaseName");
-
-builder.Services.AddMongoDB<QuizBiblioDbContext>(connectionString ?? "", dbName ?? "");
+services.AddMongoDB<QuizBiblioDbContext>(connectionString ?? "", dbName ?? "");
 
 var app = builder.Build();
 
