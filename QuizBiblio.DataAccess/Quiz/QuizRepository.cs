@@ -16,4 +16,9 @@ public class QuizRepository(QuizBiblioDbContext dbContext) : IQuizRepository
         dbContext.SaveChanges();
     }
 
+    public void UpdateQuiz(Models.Quiz quiz)
+    {
+        Quizzes.Update(quiz);
+        dbContext.SaveChanges();
+    }
 }

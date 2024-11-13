@@ -11,6 +11,8 @@ public class QuizBiblioDbContext(DbContextOptions options) : DbContext(options)
 
     public DbSet<Models.Quiz> Quizzes {  get; init; }  
 
+    public DbSet<Models.User> Users { get; init; }
+
     public static QuizBiblioDbContext Create(IMongoDatabase database) =>
         new(new DbContextOptionsBuilder<QuizBiblioDbContext>()
             .UseMongoDB(database.Client, database.DatabaseNamespace.DatabaseName)

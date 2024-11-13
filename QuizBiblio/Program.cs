@@ -1,28 +1,84 @@
-using Microsoft.EntityFrameworkCore;
-using MongoDB.Driver;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using QuizBiblio.DataAccess;
 using QuizBiblio.DatabaseSettings;
 using QuizBiblio.Services;
-
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using QuizBiblio;
+using Microsoft.Extensions.Configuration;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var configuration = builder.Configuration;
+
+//shortcut
+var services = builder.Services;
+
+string? connectionString = configuration.GetValue<string>("QuizStoreDatabase:ConnectionString");
+string? dbName = configuration.GetValue<string>("QuizStoreDatabase:DatabaseName");
+
+var jwtSettings = configuration.GetSection("JwtSettings");
+var secretKey = jwtSettings["Secret"];
+
 // Add services to the container.
-builder.Services.Configure<QuizStoreDatabaseSettings>(
-    builder.Configuration.GetSection("QuizStoreDatabase"));
+services.Configure<QuizStoreDatabaseSettings>(
+    configuration.GetSection("QuizStoreDatabase"));
+
+services.Configure<JwtSettings>(jwtSettings);
+
+services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtSettings["Issuer"],
+        ValidAudience = jwtSettings["Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
+    };
+});
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+services.AddEndpointsApiExplorer();
+services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme()
+    {
+        Name = "Authorization",
+        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+        Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
+        Scheme = "Bearer"
+    });
 
-builder.Services.AddControllers();
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement()
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
 
-builder.Services.AddServices();
+services.AddControllers();
 
-string? connectionString = builder.Configuration.GetValue<string>("QuizStoreDatabase:ConnectionString");
-string? dbName = builder.Configuration.GetValue<string>("QuizStoreDatabase:DatabaseName");
+services.AddServices();
 
-builder.Services.AddMongoDB<QuizBiblioDbContext>(connectionString ?? "", dbName ?? "");
+services.AddMongoDB<QuizBiblioDbContext>(connectionString ?? "", dbName ?? "");
 
 var app = builder.Build();
 
