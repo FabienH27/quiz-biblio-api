@@ -5,15 +5,13 @@ using QuizBiblio.Services;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using QuizBiblio;
-using Microsoft.Extensions.Configuration;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var configuration = builder.Configuration;
-
-//shortcut
+//shortcuts
 var services = builder.Services;
+var configuration = builder.Configuration;
 
 string? connectionString = configuration.GetValue<string>("QuizStoreDatabase:ConnectionString");
 string? dbName = configuration.GetValue<string>("QuizStoreDatabase:DatabaseName");
@@ -26,6 +24,19 @@ services.Configure<QuizStoreDatabaseSettings>(
     configuration.GetSection("QuizStoreDatabase"));
 
 services.Configure<JwtSettings>(jwtSettings);
+
+
+//cors policy
+string CORSOpenPolicy = "OpenCORSPolicy";
+
+services.AddCors(options =>
+{
+    options.AddPolicy(
+      name: CORSOpenPolicy,
+      builder => {
+          builder.WithOrigins(configuration["FrontUrl"] ?? "").AllowAnyHeader().AllowAnyMethod().AllowCredentials();
+      });
+});
 
 services.AddAuthentication(options =>
 {
@@ -50,11 +61,11 @@ services.AddAuthentication(options =>
 services.AddEndpointsApiExplorer();
 services.AddSwaggerGen(options =>
 {
-    options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme()
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
     {
         Name = "Authorization",
-        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
-        Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
         Scheme = "Bearer"
     });
 
@@ -91,6 +102,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseCors(CORSOpenPolicy);
+
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

@@ -46,23 +46,23 @@ public class AuthController : ControllerBase
             return Unauthorized("Invalid username or password");
         }
 
-        var token = GenerateJwtToken(user.Id.ToString());
+        var token = GenerateJwtToken(user.Id.ToString(), user.Username);
         
         return Ok(new { Token = token });
     }
 
-
-    private string GenerateJwtToken(string userId)
+    private string GenerateJwtToken(string userId, string userName)
     {
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Secret));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
-        // Define the claims for the token (e.g., userId and any other relevant claims)
+        // Claims included in the token
         var claims = new[]
         {
             new Claim(JwtRegisteredClaimNames.Sub, userId),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new Claim("userId", userId)
+            new Claim("userId", userId),
+            new Claim("userName", userName)
         };
 
         // Create the token
