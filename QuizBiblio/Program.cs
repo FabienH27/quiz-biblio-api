@@ -25,7 +25,6 @@ services.Configure<QuizStoreDatabaseSettings>(
 
 services.Configure<JwtSettings>(jwtSettings);
 
-
 //cors policy
 string CORSOpenPolicy = "OpenCORSPolicy";
 
@@ -38,24 +37,42 @@ services.AddCors(options =>
       });
 });
 
+byte[] key = Encoding.UTF8.GetBytes(secretKey ?? "");
 services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(options =>
+}).AddJwtBearer(options =>
 {
+    options.RequireHttpsMetadata = false;
+    options.SaveToken = true;
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
         ValidIssuer = jwtSettings["Issuer"],
+        ValidateAudience = true,
         ValidAudience = jwtSettings["Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
+        IssuerSigningKey = new SymmetricSecurityKey(key),
+        ValidateIssuerSigningKey = true,
+        ValidateLifetime = true,
+        ClockSkew = TimeSpan.Zero,
+    };
+    options.Events = new JwtBearerEvents
+    {
+        OnMessageReceived = context =>
+        {
+            // Check if the token is in the cookie
+            if (context.Request.Cookies.ContainsKey(jwtSettings["CookieName"] ?? "AuthToken"))
+            {
+                var cookieName = jwtSettings["CookieName"] ?? "AuthToken";
+                context.Token = context.Request.Cookies[cookieName];
+            }
+            return Task.CompletedTask;
+        }
     };
 });
+
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 services.AddEndpointsApiExplorer();
