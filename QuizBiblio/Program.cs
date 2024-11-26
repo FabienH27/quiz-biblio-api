@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using QuizBiblio;
 using Microsoft.OpenApi.Models;
+using QuizBiblio.Models.Rbac;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +25,9 @@ services.Configure<QuizStoreDatabaseSettings>(
     configuration.GetSection("QuizStoreDatabase"));
 
 services.Configure<JwtSettings>(jwtSettings);
+
+
+services.Configure<List<Role>>(configuration.GetSection("Roles"));
 
 //cors policy
 string CORSOpenPolicy = "OpenCORSPolicy";
