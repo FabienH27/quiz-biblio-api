@@ -7,8 +7,11 @@ using System.Text;
 using QuizBiblio;
 using Microsoft.OpenApi.Models;
 using QuizBiblio.Models.Rbac;
+using System.IdentityModel.Tokens.Jwt;
 
 var builder = WebApplication.CreateBuilder(args);
+
+JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); // Avoid renaming claims
 
 //shortcuts
 var services = builder.Services;

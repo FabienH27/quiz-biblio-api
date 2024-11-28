@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using QuizBiblio.Models;
 using QuizBiblio.Services.User;
+using System.Security.Claims;
 
 namespace QuizBiblio.Controllers;
 
@@ -19,6 +21,16 @@ public class UsersController(IUserService userService) : ControllerBase
     public Task<User?> GetUser(string id)
     {
         return userService.GetUser(id);
+    }
+
+
+    [HttpGet("role")]
+    [Authorize]
+    public IActionResult GetUserRole()
+    {
+        var claims = HttpContext.User.Identities.First().Claims;
+        var role = claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).First();
+        return Ok(new { role });
     }
 
     [HttpPost]

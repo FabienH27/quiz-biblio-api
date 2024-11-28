@@ -34,7 +34,7 @@ public class AuthController : ControllerBase
         {
             Username = request.Username,
             Password = PasswordHelper.HashPassword(request.Password),
-            Email = request.Email
+            Email = request.Email,
         };
 
         _userService.Create(user);
@@ -47,7 +47,7 @@ public class AuthController : ControllerBase
 
         if (user != null || PasswordHelper.VerifyPassword(request.Password, user?.Password ?? ""))
         {
-            var token = GenerateJwtToken(user?.Id.ToString() ?? "", user?.Username ?? "");
+            var token = GenerateJwtToken(user?.Id.ToString() ?? "", user?.Username ?? "", user?.Role ?? "");
 
             var cookieOptions = new CookieOptions
             {
@@ -72,13 +72,15 @@ public class AuthController : ControllerBase
         var user = HttpContext.User;
         if (user.Identity?.IsAuthenticated == true)
         {
-            var userName = user.FindFirst(ClaimTypes.Name)?.Value;
-            var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userName = user.FindFirstValue(ClaimTypes.Name);
+            var userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
+            var role = user.FindFirstValue(ClaimTypes.Role);
 
             return Ok(new
             {
                 userName,
-                userId
+                userId,
+                role
             });
         }
 
@@ -100,7 +102,7 @@ public class AuthController : ControllerBase
         return Ok(new { message = "Logged out successfully" });
     }
 
-    private string GenerateJwtToken(string userId, string name)
+    private string GenerateJwtToken(string userId, string name, string role)
     {
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Secret));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);
@@ -110,6 +112,7 @@ public class AuthController : ControllerBase
         {
             new Claim(JwtRegisteredClaimNames.Sub, userId),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new Claim(ClaimTypes.Role, role),
             new Claim(ClaimTypes.NameIdentifier, userId),
             new Claim(ClaimTypes.Name, name)
         };
