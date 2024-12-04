@@ -1,0 +1,26 @@
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using QuizBiblio.Models;
+using QuizBiblio.Models.Rbac;
+
+namespace QuizBiblio.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+[AllowAnonymous]
+public class RbacController(IOptions<List<Role>> roles) : ControllerBase
+{
+
+    private readonly List<Role> _roles = roles.Value;
+
+    [HttpGet("roles")]
+    public IActionResult GetRoles()
+    {
+        return Ok(new
+        {
+            Roles = _roles
+        });
+    }
+
+}

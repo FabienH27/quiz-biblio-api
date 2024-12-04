@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using QuizBiblio.Models;
@@ -17,10 +18,13 @@ public class AuthController : ControllerBase
     private readonly IUserService _userService;
     private readonly JwtSettings _jwtSettings;
 
+    private readonly string cookieName = "AuthToken";
+
     public AuthController(IUserService userService, IOptions<JwtSettings> jwtSettings)
     {
         _userService = userService;
         _jwtSettings = jwtSettings.Value;
+        cookieName = jwtSettings.Value.CookieName;
     }
 
     [HttpPost("register")]
@@ -30,7 +34,7 @@ public class AuthController : ControllerBase
         {
             Username = request.Username,
             Password = PasswordHelper.HashPassword(request.Password),
-            Email = request.Email
+            Email = request.Email,
         };
 
         _userService.Create(user);
@@ -41,28 +45,76 @@ public class AuthController : ControllerBase
     {
         var user = await _userService.GetUser(request.Email);
 
-        if (user == null || !PasswordHelper.VerifyPassword(request.Password, user.Password))
+        if (user != null || PasswordHelper.VerifyPassword(request.Password, user?.Password ?? ""))
         {
-            return Unauthorized("Invalid username or password");
+            var token = GenerateJwtToken(user?.Id.ToString() ?? "", user?.Username ?? "", user?.Role ?? "");
+
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                Expires = DateTime.UtcNow.AddMinutes(_jwtSettings.ExpiresInMinutes),
+                SameSite = SameSiteMode.None,
+                Path = "/",
+            };
+            Response.Cookies.Append(cookieName, token, cookieOptions);
+
+            return Ok(new{ Token = token });
         }
 
-        var token = GenerateJwtToken(user.Id.ToString(), user.Username);
-        
-        return Ok(new { Token = token });
+        return Unauthorized("Invalid username or password");
     }
 
-    private string GenerateJwtToken(string userId, string userName)
+    [Authorize]
+    [HttpGet("user-info")]
+    public IActionResult GetUserInfo()
+    {
+        var user = HttpContext.User;
+        if (user.Identity?.IsAuthenticated == true)
+        {
+            var userName = user.FindFirstValue(ClaimTypes.Name);
+            var userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
+            var role = user.FindFirstValue(ClaimTypes.Role);
+
+            return Ok(new
+            {
+                userName,
+                userId,
+                role
+            });
+        }
+
+        return Unauthorized();
+    }
+
+    [Authorize]
+    [HttpPost("logout")]
+    public IActionResult Logout()
+    {
+        Response.Cookies.Append(cookieName, "", new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = true,
+            SameSite = SameSiteMode.None,
+            Expires = DateTimeOffset.UtcNow.AddDays(-1),
+        });
+
+        return Ok(new { message = "Logged out successfully" });
+    }
+
+    private string GenerateJwtToken(string userId, string name, string role)
     {
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Secret));
-        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);
 
         // Claims included in the token
         var claims = new[]
         {
             new Claim(JwtRegisteredClaimNames.Sub, userId),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new Claim("userId", userId),
-            new Claim("userName", userName)
+            new Claim(ClaimTypes.Role, role),
+            new Claim(ClaimTypes.NameIdentifier, userId),
+            new Claim(ClaimTypes.Name, name)
         };
 
         // Create the token

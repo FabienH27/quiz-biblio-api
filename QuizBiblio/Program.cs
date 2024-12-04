@@ -6,8 +6,12 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using QuizBiblio;
 using Microsoft.OpenApi.Models;
+using QuizBiblio.Models.Rbac;
+using System.IdentityModel.Tokens.Jwt;
 
 var builder = WebApplication.CreateBuilder(args);
+
+JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); // Avoid renaming claims
 
 //shortcuts
 var services = builder.Services;
@@ -26,6 +30,8 @@ services.Configure<QuizStoreDatabaseSettings>(
 services.Configure<JwtSettings>(jwtSettings);
 
 
+services.Configure<List<Role>>(configuration.GetSection("Roles"));
+
 //cors policy
 string CORSOpenPolicy = "OpenCORSPolicy";
 
@@ -38,24 +44,42 @@ services.AddCors(options =>
       });
 });
 
+byte[] key = Encoding.UTF8.GetBytes(secretKey ?? "");
 services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(options =>
+}).AddJwtBearer(options =>
 {
+    options.RequireHttpsMetadata = false;
+    options.SaveToken = true;
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
         ValidIssuer = jwtSettings["Issuer"],
+        ValidateAudience = true,
         ValidAudience = jwtSettings["Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
+        IssuerSigningKey = new SymmetricSecurityKey(key),
+        ValidateIssuerSigningKey = true,
+        ValidateLifetime = true,
+        ClockSkew = TimeSpan.Zero,
+    };
+    options.Events = new JwtBearerEvents
+    {
+        OnMessageReceived = context =>
+        {
+            // Check if the token is in the cookie
+            if (context.Request.Cookies.ContainsKey(jwtSettings["CookieName"] ?? "AuthToken"))
+            {
+                var cookieName = jwtSettings["CookieName"] ?? "AuthToken";
+                context.Token = context.Request.Cookies[cookieName];
+            }
+            return Task.CompletedTask;
+        }
     };
 });
+
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 services.AddEndpointsApiExplorer();

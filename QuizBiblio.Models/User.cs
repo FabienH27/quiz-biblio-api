@@ -21,4 +21,7 @@ public class User
 
     [BsonElement("Username")]
     public required string Username { get; set; }
+
+    [BsonElement("Role")]
+    public string Role { get; set; } = "USER";
 }
