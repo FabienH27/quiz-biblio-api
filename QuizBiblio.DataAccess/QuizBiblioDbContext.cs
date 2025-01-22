@@ -7,11 +7,13 @@ namespace QuizBiblio.DataAccess;
 public class QuizBiblioDbContext(DbContextOptions options) : DbContext(options)
 {
 
-    public DbSet<Book> Books { get; init; }
+    public DbSet<Book> Books => Set<Book>();
 
-    public DbSet<Models.Quiz> Quizzes {  get; init; }  
+    public DbSet<Models.Quiz> Quizzes => Set<Models.Quiz>();
 
-    public DbSet<Models.User> Users { get; init; }
+    public DbSet<Models.User> Users => Set<Models.User>();
+
+    public DbSet<Models.Theme> Themes => Set<Models.Theme>();
 
     public static QuizBiblioDbContext Create(IMongoDatabase database) =>
         new(new DbContextOptionsBuilder<QuizBiblioDbContext>()
@@ -25,6 +27,8 @@ public class QuizBiblioDbContext(DbContextOptions options) : DbContext(options)
         modelBuilder.Entity<Book>();
 
         modelBuilder.Entity<Models.Quiz>();
+
+        modelBuilder.Entity<Models.Theme>();
     }
 
 }

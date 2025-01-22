@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -45,7 +46,7 @@ public class AuthController : ControllerBase
     {
         var user = await _userService.GetUser(request.Email);
 
-        if (user != null || PasswordHelper.VerifyPassword(request.Password, user?.Password ?? ""))
+        if (user != null && PasswordHelper.VerifyPassword(request.Password, user?.Password ?? ""))
         {
             var token = GenerateJwtToken(user?.Id.ToString() ?? "", user?.Username ?? "", user?.Role ?? "");
 
@@ -59,7 +60,7 @@ public class AuthController : ControllerBase
             };
             Response.Cookies.Append(cookieName, token, cookieOptions);
 
-            return Ok(new{ Token = token });
+            return Ok(new{ Message = "Successfully logged in" });
         }
 
         return Unauthorized("Invalid username or password");

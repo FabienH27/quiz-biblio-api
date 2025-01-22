@@ -14,5 +14,8 @@ public class QuizzesController(IQuizService quizService) : ControllerBase
     public async Task<List<Quiz>> GetQuizzes() => await quizService.GetQuizzesAsync();
 
     [HttpPost]
-    public void CreateQuiz(Models.Quiz quiz) => quizService.CreateQuiz(quiz);
+    public void CreateQuiz(Quiz quiz) {
+
+        quizService.CreateQuiz(quiz);
+    }
 }

@@ -10,6 +10,6 @@ public class Theme
     [BsonId]
     public ObjectId Id { get; set; }
 
-    [BsonElement("title")]
+    [BsonElement("name")]
     public required string Name { get; set; }
 }

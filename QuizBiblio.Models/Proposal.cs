@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace QuizBiblio.Models;
 
-public class Option
+public class Proposal
 {
     [BsonElement("text")]
     public string Text { get; set; } = string.Empty;
 
     [BsonElement("imageId")]
-    public string ImageId { get; set; } = string.Empty;
+    public string? ImageId { get; set; }
 }
