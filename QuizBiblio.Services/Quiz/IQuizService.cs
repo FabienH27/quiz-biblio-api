@@ -6,7 +6,7 @@ public interface IQuizService
 {
     public Task<List<QuizEntity>> GetQuizzesAsync();
 
-    public Task<List<QuizEntity>> GetUserQuizzesAsync(string userId);
+    public Task<List<QuizInfo>> GetUserQuizzesAsync(string userId);
 
     public void CreateQuiz(QuizDto quiz, QuizCreator quizCreator);
 }

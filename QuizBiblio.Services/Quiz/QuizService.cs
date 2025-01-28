@@ -8,7 +8,7 @@ public class QuizService(IQuizRepository quizRepository) : IQuizService
 {
     public async Task<List<QuizEntity>> GetQuizzesAsync() => await quizRepository.GetQuizzesAsync();
 
-    public async Task<List<QuizEntity>> GetUserQuizzesAsync(string userId) => await quizRepository.GetUserQuizzesAsync(userId);
+    public async Task<List<QuizInfo>> GetUserQuizzesAsync(string userId) => await quizRepository.GetUserQuizzesAsync(userId);
    
     public void CreateQuiz(QuizDto quiz, QuizCreator quizCreator)
     {

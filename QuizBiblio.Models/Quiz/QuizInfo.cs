@@ -9,4 +9,6 @@ public class QuizInfo
     public List<string> Themes { get; set; } = [];
 
     public string? ImageId { get; set; }
+
+    public required string CreatorName { get; set; }
 }

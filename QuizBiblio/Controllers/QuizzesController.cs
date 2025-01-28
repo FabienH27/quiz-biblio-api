@@ -19,7 +19,7 @@ public class QuizzesController(IQuizService quizService) : ControllerBase
 
     //TODO: Make it admin accessible only
     [HttpGet("user")]
-    public async Task<List<QuizEntity>> GetUserQuizzes()
+    public async Task<List<QuizInfo>> GetUserQuizzes()
     {
         var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
         return await quizService.GetUserQuizzesAsync(userId);
@@ -31,7 +31,7 @@ public class QuizzesController(IQuizService quizService) : ControllerBase
         var userName = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value ?? string.Empty;
         var user = new QuizCreator
         {
-            CreatorId = ObjectId.Parse(userId),
+            Id = ObjectId.Parse(userId),
             Name = userName
         };
 

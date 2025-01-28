@@ -16,9 +16,9 @@ public class ThemeRepository : IThemeRepository
         _dbContext = dbContext;
     }
 
-    public void CreateTheme(M.Theme theme)
+    public async Task CreateTheme(M.Theme theme)
     {
-        throw new NotImplementedException();
+        await Themes.InsertOneAsync(theme);
     }
 
     public async Task<List<string>> GetThemesAsync()

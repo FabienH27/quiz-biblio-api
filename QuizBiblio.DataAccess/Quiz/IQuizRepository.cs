@@ -6,9 +6,9 @@ public interface IQuizRepository
 {
     public Task<List<QuizEntity>> GetQuizzesAsync();
 
-    public Task<List<QuizEntity>> GetUserQuizzesAsync(string userId);
+    public Task<List<QuizInfo>> GetUserQuizzesAsync(string userId);
 
-    public void CreateQuiz(QuizEntity quiz);
+    public Task CreateQuiz(QuizEntity quiz);
 
-    public void UpdateQuiz(QuizEntity quiz);
+    public Task UpdateQuiz(QuizEntity quiz);
 }
