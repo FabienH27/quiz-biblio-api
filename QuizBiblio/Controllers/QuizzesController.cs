@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using MongoDB.Bson;
+using QuizBiblio.Models.DatabaseSettings;
 using QuizBiblio.Models.Quiz;
 using QuizBiblio.Services.Quiz;
 using System.Security.Claims;

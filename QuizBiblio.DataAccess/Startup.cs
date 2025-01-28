@@ -1,6 +1,6 @@
-﻿using AutoMapper;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using QuizBiblio.DataAccess.Quiz;
+using QuizBiblio.DataAccess.QbDbContext;
 using QuizBiblio.DataAccess.Theme;
 using QuizBiblio.DataAccess.User;
 

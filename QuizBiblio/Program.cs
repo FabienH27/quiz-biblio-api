@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using QuizBiblio.DataAccess;
-using QuizBiblio.DatabaseSettings;
 using QuizBiblio.Services;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -8,6 +7,9 @@ using QuizBiblio;
 using Microsoft.OpenApi.Models;
 using QuizBiblio.Models.Rbac;
 using System.IdentityModel.Tokens.Jwt;
+using MongoDB.Driver;
+using QuizBiblio.DataAccess.QbDbContext;
+using QuizBiblio.Models.DatabaseSettings;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,13 +25,20 @@ string? dbName = configuration.GetValue<string>("QuizStoreDatabase:DatabaseName"
 var jwtSettings = configuration.GetSection("JwtSettings");
 var secretKey = jwtSettings["Secret"];
 
-// Add services to the container.
+
+// MongoDB Settings
+var settings = MongoClientSettings.FromUrl(new MongoUrl(connectionString));
+settings.SslSettings = new SslSettings() { EnabledSslProtocols = System.Security.Authentication.SslProtocols.Tls12 };
+services.AddSingleton<IMongoClient>(new MongoClient(settings));
+
+
+services.AddMongoDB<QuizBiblioDbContext>(connectionString ?? "", dbName ?? "");
+services.AddSingleton<IMongoDbContext, MongoDbContext>();
+
+
 services.Configure<QuizStoreDatabaseSettings>(
     configuration.GetSection("QuizStoreDatabase"));
-
 services.Configure<JwtSettings>(jwtSettings);
-
-
 services.Configure<List<Role>>(configuration.GetSection("Roles"));
 
 //cors policy
@@ -112,8 +121,6 @@ services.AddSwaggerGen(options =>
 services.AddControllers();
 
 services.AddServices();
-
-services.AddMongoDB<QuizBiblioDbContext>(connectionString ?? "", dbName ?? "");
 
 var app = builder.Build();
 

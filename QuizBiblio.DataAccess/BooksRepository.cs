@@ -7,7 +7,7 @@ namespace QuizBiblio.DataAccess;
 
 public class BooksRepository
 {
-    //private readonly IMongoCollection<Book> _booksCollection;
+    private readonly IMongoCollection<Book> _booksCollection;
 
     private readonly QuizBiblioDbContext _dbContext;
 

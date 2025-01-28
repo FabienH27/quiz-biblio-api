@@ -1,4 +1,4 @@
-﻿namespace QuizBiblio.DatabaseSettings;
+﻿namespace QuizBiblio.Models.DatabaseSettings;
 
 public class QuizStoreDatabaseSettings
 {
