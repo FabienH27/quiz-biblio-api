@@ -12,5 +12,9 @@ namespace QuizBiblio.Controllers;
 public class ThemesController(IThemeService themeService) : ControllerBase
 {
     [HttpGet]
-    public async Task<List<string>> GetThemes() => await themeService.GetThemes();  
+    public async Task<List<string>> GetThemes() => await themeService.GetThemesAsync();
+
+
+    [HttpPost]
+    public void CreateTheme([FromBody] Theme theme) => themeService.CreateTheme(theme);
 }

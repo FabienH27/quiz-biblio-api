@@ -1,24 +1,40 @@
-﻿using Microsoft.EntityFrameworkCore;
-using QuizBiblio.Models;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using Microsoft.EntityFrameworkCore;
+using MongoDB.Bson;
+using MongoDB.Driver;
+using QuizBiblio.Models.Quiz;
 
 namespace QuizBiblio.DataAccess.Quiz;
 
-public class QuizRepository(QuizBiblioDbContext dbContext) : IQuizRepository
+public class QuizRepository : IQuizRepository
 {
-    DbSet<Models.Quiz> Quizzes => dbContext.Quizzes;
+    private readonly QuizBiblioDbContext _dbContext;
 
-    public async Task<List<Models.Quiz>> GetQuizzesAsync() => await Quizzes.ToListAsync();
+    DbSet<QuizEntity> Quizzes => _dbContext.Quizzes;
 
-    //Non async : standard use case, refer to Add() method documentation
-    public void CreateQuiz(Models.Quiz quiz)
+    public QuizRepository(QuizBiblioDbContext dbContext)
     {
-        Quizzes.Add(quiz);
-        dbContext.SaveChanges();
+        _dbContext = dbContext;
     }
 
-    public void UpdateQuiz(Models.Quiz quiz)
+    public async Task<List<QuizEntity>> GetQuizzesAsync() => await Quizzes.ToListAsync();
+
+    public async Task<List<QuizEntity>> GetUserQuizzesAsync(string userId)
+    {
+        return await Quizzes.Where(quiz => quiz.Creator.CreatorId == ObjectId.Parse(userId)).ToListAsync();
+    }
+
+    //Non async : standard use case, refer to Add() method documentation
+    public void CreateQuiz(QuizEntity quiz)
+    {
+        Quizzes.Add(quiz);
+        _dbContext.SaveChanges();
+    }
+
+    public void UpdateQuiz(QuizEntity quiz)
     {
         Quizzes.Update(quiz);
-        dbContext.SaveChanges();
+        _dbContext.SaveChanges();
     }
 }

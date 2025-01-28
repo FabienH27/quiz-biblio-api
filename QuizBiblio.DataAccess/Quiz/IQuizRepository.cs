@@ -1,10 +1,14 @@
-﻿namespace QuizBiblio.DataAccess.Quiz;
+﻿using QuizBiblio.Models.Quiz;
+
+namespace QuizBiblio.DataAccess.Quiz;
 
 public interface IQuizRepository
 {
-    public Task<List<Models.Quiz>> GetQuizzesAsync();
+    public Task<List<QuizEntity>> GetQuizzesAsync();
 
-    public void CreateQuiz(Models.Quiz quiz);
+    public Task<List<QuizEntity>> GetUserQuizzesAsync(string userId);
 
-    public void UpdateQuiz(Models.Quiz quiz);
+    public void CreateQuiz(QuizEntity quiz);
+
+    public void UpdateQuiz(QuizEntity quiz);
 }
