@@ -8,7 +8,8 @@ namespace QuizBiblio.Models.Quiz;
 public class QuizEntity
 {
     [BsonId]
-    public ObjectId Id { get; set; }
+    [BsonRepresentation(BsonType.ObjectId)]
+    public required string Id { get; set; }
 
     [BsonElement("title")]
     public required string Title { get; set; }

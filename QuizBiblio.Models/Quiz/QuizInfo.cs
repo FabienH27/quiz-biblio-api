@@ -10,5 +10,9 @@ public class QuizInfo
 
     public string? ImageId { get; set; }
 
+    public int QuestionCount {
+        get => Themes.Count;
+    }
+
     public required string CreatorName { get; set; }
 }

@@ -8,8 +8,6 @@ namespace QuizBiblio.DataAccess;
 public class QuizBiblioDbContext(DbContextOptions options) : DbContext(options)
 {
 
-    public DbSet<Book> Books => Set<Book>();
-
     public DbSet<QuizEntity> Quizzes => Set<QuizEntity>();
 
     public DbSet<Models.User> Users => Set<Models.User>();
@@ -24,8 +22,6 @@ public class QuizBiblioDbContext(DbContextOptions options) : DbContext(options)
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-
-        modelBuilder.Entity<Book>();
 
         modelBuilder.Entity<QuizEntity>();
 

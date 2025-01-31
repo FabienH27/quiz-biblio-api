@@ -15,8 +15,6 @@ public static class Startup
 
         services.AddScoped<IThemeRepository, ThemeRepository>();
 
-        services.AddScoped<BooksRepository>();
-
         return services;
     }
 }

@@ -16,8 +16,6 @@ public static class Startup
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IThemeService, ThemeService>();
        
-        services.AddScoped<BooksService>();
-
         return services;
     }
 }

@@ -4,7 +4,9 @@ namespace QuizBiblio.DataAccess.Quiz;
 
 public interface IQuizRepository
 {
-    public Task<List<QuizEntity>> GetQuizzesAsync();
+    public Task<List<QuizInfo>> GetQuizzesAsync();
+
+    public Task<QuizDto> GetQuiz(string quizId);
 
     public Task<List<QuizInfo>> GetUserQuizzesAsync(string userId);
 
