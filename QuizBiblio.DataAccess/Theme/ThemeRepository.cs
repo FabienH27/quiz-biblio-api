@@ -1,15 +1,29 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using MongoDB.Driver;
+using QuizBiblio.DataAccess.QbDbContext;
+using M = QuizBiblio.Models;
 
 namespace QuizBiblio.DataAccess.Theme;
 
-public class ThemeRepository(QuizBiblioDbContext dbContext) : IThemeRepository
+public class ThemeRepository : IThemeRepository
 {
-    DbSet<Models.Theme> Themes => dbContext.Themes;
+    private readonly IMongoDbContext _dbContext;
 
-    public async Task<List<string>> GetThemesAsync() => await Themes.Select(x => x.Name).ToListAsync();
+    IMongoCollection<M.Theme> Themes => _dbContext.GetCollection<M.Theme>("Themes");
+
+    public ThemeRepository(IMongoDbContext dbContext)
+    {
+        _dbContext = dbContext;
+    }
+
+    public async Task CreateTheme(M.Theme theme)
+    {
+        await Themes.InsertOneAsync(theme);
+    }
+
+    public async Task<List<string>> GetThemesAsync()
+    {
+        var projection = Builders<M.Theme>.Projection.Expression(t => t.Name);
+        return await Themes.Find(_ => true).Project(projection).ToListAsync();
+    }
 }

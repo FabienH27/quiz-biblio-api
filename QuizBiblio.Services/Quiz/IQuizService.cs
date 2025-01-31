@@ -1,8 +1,16 @@
-﻿namespace QuizBiblio.Services.Quiz;
+﻿using QuizBiblio.Models.Quiz;
+
+namespace QuizBiblio.Services.Quiz;
 
 public interface IQuizService
 {
-    public Task<List<Models.Quiz>> GetQuizzesAsync();
+    public Task<List<QuizInfo>> GetQuizzesAsync();
 
-    public void CreateQuiz(Models.Quiz quiz);
+    public Task<QuizDto> GetByIdAsync(string quizId);
+
+    public Task<List<QuizInfo>> GetUserQuizzesAsync(string userId);
+
+    public void CreateQuiz(QuizDto quiz);
+
+    public Task UpdateQuiz(QuizDto quizDto);
 }

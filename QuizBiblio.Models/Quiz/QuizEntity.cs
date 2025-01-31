@@ -1,14 +1,15 @@
-﻿using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
+﻿using MongoDB.Bson.Serialization.Attributes;
+using MongoDB.Bson;
 using MongoDB.EntityFrameworkCore;
 
-namespace QuizBiblio.Models;
+namespace QuizBiblio.Models.Quiz;
 
 [Collection("Quizzes")]
-public class Quiz
+public class QuizEntity
 {
     [BsonId]
-    public ObjectId Id { get; set; }
+    [BsonRepresentation(BsonType.ObjectId)]
+    public required string Id { get; set; }
 
     [BsonElement("title")]
     public required string Title { get; set; }
@@ -21,4 +22,8 @@ public class Quiz
 
     [BsonElement("questions")]
     public List<Question> Questions { get; set; } = [];
+
+    [BsonElement("creator")]
+    public required QuizCreator Creator { get; set; }
+
 }

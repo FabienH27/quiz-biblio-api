@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using QuizBiblio.DataAccess.Quiz;
+using QuizBiblio.DataAccess.QbDbContext;
 using QuizBiblio.DataAccess.Theme;
 using QuizBiblio.DataAccess.User;
 
@@ -13,8 +14,6 @@ public static class Startup
         services.AddScoped<IUserRepository, UserRepository>();
 
         services.AddScoped<IThemeRepository, ThemeRepository>();
-
-        services.AddScoped<BooksRepository>();
 
         return services;
     }

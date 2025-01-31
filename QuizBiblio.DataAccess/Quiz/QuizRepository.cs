@@ -1,24 +1,70 @@
-﻿using Microsoft.EntityFrameworkCore;
-using QuizBiblio.Models;
+﻿using MongoDB.Bson;
+using MongoDB.Driver;
+using MongoDB.Driver.Linq;
+using QuizBiblio.DataAccess.QbDbContext;
+using QuizBiblio.Models.Quiz;
+using QuizBiblio.Models.Quiz.Utils;
 
 namespace QuizBiblio.DataAccess.Quiz;
 
-public class QuizRepository(QuizBiblioDbContext dbContext) : IQuizRepository
+public class QuizRepository : IQuizRepository
 {
-    DbSet<Models.Quiz> Quizzes => dbContext.Quizzes;
 
-    public async Task<List<Models.Quiz>> GetQuizzesAsync() => await Quizzes.ToListAsync();
+    private readonly IMongoDbContext _dbContext;
 
-    //Non async : standard use case, refer to Add() method documentation
-    public void CreateQuiz(Models.Quiz quiz)
+    private readonly FilterDefinitionBuilder<QuizEntity> Filters = Builders<QuizEntity>.Filter;
+
+    private readonly ProjectionDefinition<QuizEntity, QuizDto> _dtoProjection;
+    private readonly ProjectionDefinition<QuizEntity, QuizInfo> _infoProjection;
+
+
+    IMongoCollection<QuizEntity> Quizzes => _dbContext.GetCollection<QuizEntity>("Quizzes");
+
+    public QuizRepository(IMongoDbContext dbContext)
     {
-        Quizzes.Add(quiz);
-        dbContext.SaveChanges();
+        _dbContext = dbContext;
+        _dtoProjection = QuizMapper.ProjectTo<QuizEntity, QuizDto>();
+        _infoProjection = QuizMapper.ProjectTo<QuizEntity, QuizInfo>();
     }
 
-    public void UpdateQuiz(Models.Quiz quiz)
+    public async Task<List<QuizInfo>> GetQuizzesAsync()
     {
-        Quizzes.Update(quiz);
-        dbContext.SaveChanges();
+        return await Quizzes.Find(_ => true)
+            .Project(q => new QuizInfo
+            {
+                Id = q.Id,
+                Title = q.Title,
+                ImageId = q.ImageId,
+                Themes = q.Themes,
+                CreatorName = q.Creator.Name,
+            })
+            .ToListAsync();
+    }
+
+    public async Task<QuizDto> GetQuiz(string quizId)
+    {
+        var filter = Filters.Eq(q => q.Id, quizId);
+        return await Quizzes.Find(filter)
+            .Project(_dtoProjection)
+            .FirstOrDefaultAsync();
+    }
+
+    public async Task<List<QuizInfo>> GetUserQuizzesAsync(string userId)
+    {
+        var filter = Filters.Eq(q => q.Creator.Id, userId);
+
+        return await Quizzes.Find(filter)
+            .Project(_infoProjection)
+            .ToListAsync();
+    }
+
+    public async Task CreateQuiz(QuizEntity quiz)
+    {
+        await Quizzes.InsertOneAsync(quiz);
+    }
+
+    public async Task UpdateQuiz(QuizEntity quizEntity)
+    {
+        await Quizzes.ReplaceOneAsync(quiz => quiz.Id == quizEntity.Id, quizEntity);
     }
 }

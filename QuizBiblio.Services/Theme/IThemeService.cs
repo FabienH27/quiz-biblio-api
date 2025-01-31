@@ -8,5 +8,7 @@ public interface IThemeService
     /// Get all themes
     /// </summary>
     /// <returns>all themes</returns>
-    public Task<List<string>> GetThemes();
+    public Task<List<string>> GetThemesAsync();
+
+    public void CreateTheme(M.Theme theme);
 }

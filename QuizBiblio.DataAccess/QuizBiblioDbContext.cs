@@ -1,15 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
 using QuizBiblio.Models;
+using QuizBiblio.Models.Quiz;
 
 namespace QuizBiblio.DataAccess;
 
 public class QuizBiblioDbContext(DbContextOptions options) : DbContext(options)
 {
 
-    public DbSet<Book> Books => Set<Book>();
-
-    public DbSet<Models.Quiz> Quizzes => Set<Models.Quiz>();
+    public DbSet<QuizEntity> Quizzes => Set<QuizEntity>();
 
     public DbSet<Models.User> Users => Set<Models.User>();
 
@@ -24,9 +23,7 @@ public class QuizBiblioDbContext(DbContextOptions options) : DbContext(options)
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<Book>();
-
-        modelBuilder.Entity<Models.Quiz>();
+        modelBuilder.Entity<QuizEntity>();
 
         modelBuilder.Entity<Models.Theme>();
     }
