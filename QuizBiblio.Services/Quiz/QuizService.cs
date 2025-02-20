@@ -10,7 +10,6 @@ public class QuizService(IQuizRepository quizRepository) : IQuizService
     public async Task<List<QuizInfo>> GetQuizzesAsync()
     {
         return await quizRepository.GetQuizzesAsync();
-
     }
 
     public async Task<QuizDto> GetByIdAsync(string quizId) => await quizRepository.GetQuiz(quizId);

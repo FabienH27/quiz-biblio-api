@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
+using QuizBiblio.Helper;
 using QuizBiblio.Models.DatabaseSettings;
 using QuizBiblio.Models.Quiz;
 using QuizBiblio.Models.Quiz.Utils;
@@ -16,6 +17,7 @@ namespace QuizBiblio.Controllers;
 public class QuizzesController(IQuizService quizService) : ControllerBase
 {
     [HttpGet]
+    [AllowAnonymous]
     public async Task<List<QuizInfo>> GetQuizzes() => await quizService.GetQuizzesAsync();
 
     [HttpGet("{quizId}")]
@@ -28,14 +30,14 @@ public class QuizzesController(IQuizService quizService) : ControllerBase
     [HttpGet("user")]
     public async Task<List<QuizInfo>> GetUserQuizzes()
     {
-        var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+        var userId = User.Claims.GetUserId();
         return await quizService.GetUserQuizzesAsync(userId);
     }
 
     [HttpPost]
     public void CreateQuiz(CreateQuizResponse quiz) {
-        var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
-        var userName = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value ?? string.Empty;
+        var userId = User.Claims.GetUserId();
+        var userName = User.Claims.GetUserName();
         var user = new QuizCreator
         {
             Id = userId,

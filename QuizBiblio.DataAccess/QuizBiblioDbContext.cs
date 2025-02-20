@@ -2,6 +2,7 @@
 using MongoDB.Driver;
 using QuizBiblio.Models;
 using QuizBiblio.Models.Quiz;
+using QuizBiblio.Models.UserQuiz;
 
 namespace QuizBiblio.DataAccess;
 
@@ -13,6 +14,8 @@ public class QuizBiblioDbContext(DbContextOptions options) : DbContext(options)
     public DbSet<Models.User> Users => Set<Models.User>();
 
     public DbSet<Models.Theme> Themes => Set<Models.Theme>();
+
+    public DbSet<UserQuizScoreEntity> UserQuizScores => Set<UserQuizScoreEntity>();
 
     public static QuizBiblioDbContext Create(IMongoDatabase database) =>
         new(new DbContextOptionsBuilder<QuizBiblioDbContext>()
