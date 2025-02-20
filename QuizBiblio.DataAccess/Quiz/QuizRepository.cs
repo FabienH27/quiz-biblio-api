@@ -15,8 +15,6 @@ public class QuizRepository : IQuizRepository
     private readonly FilterDefinitionBuilder<QuizEntity> Filters = Builders<QuizEntity>.Filter;
 
     private readonly ProjectionDefinition<QuizEntity, QuizDto> _dtoProjection;
-    private readonly ProjectionDefinition<QuizEntity, QuizInfo> _infoProjection;
-
 
     IMongoCollection<QuizEntity> Quizzes => _dbContext.GetCollection<QuizEntity>("Quizzes");
 
@@ -24,7 +22,6 @@ public class QuizRepository : IQuizRepository
     {
         _dbContext = dbContext;
         _dtoProjection = QuizMapper.ProjectTo<QuizEntity, QuizDto>();
-        _infoProjection = QuizMapper.ProjectTo<QuizEntity, QuizInfo>();
     }
 
     public async Task<List<QuizInfo>> GetQuizzesAsync()
@@ -37,6 +34,7 @@ public class QuizRepository : IQuizRepository
                 ImageId = q.ImageId,
                 Themes = q.Themes,
                 CreatorName = q.Creator.Name,
+                QuestionCount = q.Questions.Count,
             })
             .ToListAsync();
     }
@@ -54,7 +52,15 @@ public class QuizRepository : IQuizRepository
         var filter = Filters.Eq(q => q.Creator.Id, userId);
 
         return await Quizzes.Find(filter)
-            .Project(_infoProjection)
+            .Project(q => new QuizInfo
+            {
+                Id = q.Id,
+                Title = q.Title,
+                CreatorName = q.Creator.Name,
+                ImageId= q.ImageId,
+                Themes = q.Themes,
+                QuestionCount = q.Questions.Count
+            })
             .ToListAsync();
     }
 

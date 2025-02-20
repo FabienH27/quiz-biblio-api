@@ -3,6 +3,7 @@ using QuizBiblio.DataAccess;
 using QuizBiblio.Services.Quiz;
 using QuizBiblio.Services.Theme;
 using QuizBiblio.Services.User;
+using QuizBiblio.Services.UserQuizScore;
 
 namespace QuizBiblio.Services;
 public static class Startup
@@ -13,8 +14,12 @@ public static class Startup
         services.AddRepositories();
 
         services.AddScoped<IQuizService, QuizService>();
+
         services.AddScoped<IUserService, UserService>();
+        
         services.AddScoped<IThemeService, ThemeService>();
+        
+        services.AddScoped<IUserQuizScoreService, UserQuizScoreService>();
        
         return services;
     }
