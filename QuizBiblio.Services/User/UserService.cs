@@ -9,15 +9,14 @@ namespace QuizBiblio.Services.User;
 
 public class UserService(IUserRepository userRepository) : IUserService
 {
-    public async Task<List<M.User>> GetUsers() => await userRepository.GetUsers();
+    public async Task<List<M.UserEntity>> GetUsers() => await userRepository.GetUsers();
 
-    public async Task<M.User?> GetUser(ObjectId id) => await userRepository.GetUser(id);
+    public async Task<M.UserEntity?> GetUser(ObjectId id) => await userRepository.GetUser(id);
 
-    public async Task<M.User?> GetUser(string email) => await userRepository.GetUser(email);
+    public async Task<M.UserEntity?> GetUser(string email) => await userRepository.GetUser(email);
 
-    public void Create(M.User user)
+    public async Task Create(M.UserEntity user)
     {
-
-        userRepository.Create(user);
+        await userRepository.Create(user);
     }
 }

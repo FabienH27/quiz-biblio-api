@@ -1,10 +1,8 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
-using MongoDB.EntityFrameworkCore;
 
 namespace QuizBiblio.Models.UserQuiz;
 
-[Collection("UserQuizScore")]
 public class UserQuizScoreEntity
 {
     [BsonId]

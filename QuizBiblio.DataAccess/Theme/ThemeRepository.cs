@@ -16,11 +16,20 @@ public class ThemeRepository : IThemeRepository
         _dbContext = dbContext;
     }
 
+    /// <summary>
+    /// Creates a theme
+    /// </summary>
+    /// <param name="theme"></param>
+    /// <returns></returns>
     public async Task CreateTheme(M.Theme theme)
     {
         await Themes.InsertOneAsync(theme);
     }
 
+    /// <summary>
+    /// Gets all themes
+    /// </summary>
+    /// <returns></returns>
     public async Task<List<string>> GetThemesAsync()
     {
         var projection = Builders<M.Theme>.Projection.Expression(t => t.Name);

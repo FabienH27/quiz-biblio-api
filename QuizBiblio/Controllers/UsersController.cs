@@ -11,19 +11,31 @@ namespace QuizBiblio.Controllers;
 public class UsersController(IUserService userService) : ControllerBase
 {
 
+    /// <summary>
+    /// Gets users
+    /// </summary>
+    /// <returns></returns>
     [HttpGet]
-    public Task<List<User>> GetUsers()
+    public Task<List<UserEntity>> GetUsers()
     {
         return userService.GetUsers();
     }
 
+    /// <summary>
+    /// Get a specific user
+    /// </summary>
+    /// <param name="id">id of the user to get</param>
+    /// <returns></returns>
     [HttpGet("{id:length(24)}")]
-    public Task<User?> GetUser(string id)
+    public Task<UserEntity?> GetUser(string id)
     {
         return userService.GetUser(id);
     }
 
-
+    /// <summary>
+    /// Get role from authenticated user
+    /// </summary>
+    /// <returns></returns>
     [HttpGet("role")]
     [Authorize]
     public IActionResult GetUserRole()
@@ -33,8 +45,13 @@ public class UsersController(IUserService userService) : ControllerBase
         return Ok(new { role });
     }
 
+    /// <summary>
+    /// Creates a user
+    /// </summary>
+    /// <param name="user"></param>
+    /// <returns></returns>
     [HttpPost]
-    public ActionResult<User> Create(User user)
+    public ActionResult<UserEntity> Create(UserEntity user)
     {
         userService.Create(user);
 

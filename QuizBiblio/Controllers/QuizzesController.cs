@@ -1,13 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
-using MongoDB.Bson;
 using QuizBiblio.Helper;
-using QuizBiblio.Models.DatabaseSettings;
 using QuizBiblio.Models.Quiz;
-using QuizBiblio.Models.Quiz.Utils;
 using QuizBiblio.Services.Quiz;
-using System.Security.Claims;
+using QuizBiblio.Services.Utils;
 
 namespace QuizBiblio.Controllers;
 
@@ -16,10 +12,19 @@ namespace QuizBiblio.Controllers;
 [Route("api/[controller]")]
 public class QuizzesController(IQuizService quizService) : ControllerBase
 {
+    /// <summary>
+    /// Gets all quizzes
+    /// </summary>
+    /// <returns></returns>
     [HttpGet]
     [AllowAnonymous]
     public async Task<List<QuizInfo>> GetQuizzes() => await quizService.GetQuizzesAsync();
 
+    /// <summary>
+    /// Gets quiz by id
+    /// </summary>
+    /// <param name="quizId"></param>
+    /// <returns></returns>
     [HttpGet("{quizId}")]
     public async Task<QuizDto> GetQuiz(string quizId)
     {
@@ -27,6 +32,10 @@ public class QuizzesController(IQuizService quizService) : ControllerBase
     }
 
     //TODO: Make it admin accessible only
+    /// <summary>
+    /// Get quizzes for a specific user
+    /// </summary>
+    /// <returns></returns>
     [HttpGet("user")]
     public async Task<List<QuizInfo>> GetUserQuizzes()
     {
@@ -34,8 +43,12 @@ public class QuizzesController(IQuizService quizService) : ControllerBase
         return await quizService.GetUserQuizzesAsync(userId);
     }
 
+    /// <summary>
+    /// Creates a quiz
+    /// </summary>
+    /// <param name="quiz"></param>
     [HttpPost]
-    public void CreateQuiz(CreateQuizResponse quiz) {
+    public async Task CreateQuiz(CreateQuizResponse quiz) {
         var userId = User.Claims.GetUserId();
         var userName = User.Claims.GetUserName();
         var user = new QuizCreator
@@ -44,16 +57,7 @@ public class QuizzesController(IQuizService quizService) : ControllerBase
             Name = userName
         };
 
-        var quizDto = new QuizDto
-        {
-            Title = quiz.Title,
-            ImageId = quiz.ImageId,
-            Questions = quiz.Questions,
-            Themes = quiz.Themes,
-            Creator = user
-        };
-
-        quizService.CreateQuiz(quizDto);
+        await quizService.CreateQuiz(quiz.ToDto(user));
     }
 
     [HttpPut("{quizId}")]
