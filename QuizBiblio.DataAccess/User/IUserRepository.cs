@@ -1,5 +1,5 @@
 ﻿using MongoDB.Bson;
-using M = QuizBiblio.Models;
+using QuizBiblio.Models;
 
 namespace QuizBiblio.DataAccess.User;
 
@@ -9,26 +9,26 @@ public interface IUserRepository
     /// Get all users
     /// </summary>
     /// <returns>all users</returns>
-    public Task<List<M.User>> GetUsers();
+    public Task<List<UserEntity>> GetUsers();
 
     /// <summary>
     /// Get a specific user
     /// </summary>
     /// <param name="username">username of the user to fetch</param>
     /// <returns>specific user</returns>
-    public Task<M.User?> GetUser(ObjectId id);
+    public Task<UserEntity?> GetUser(ObjectId id);
 
     /// <summary>
     /// Get a specific user
     /// </summary>
     /// <param name="username">email of the user to fetch</param>
     /// <returns>specific user</returns>
-    public Task<M.User?> GetUser(string email);
+    public Task<UserEntity?> GetUser(string email);
 
     /// <summary>
     /// Create a user
     /// </summary>
     /// <param name="user">user to create</param>
     /// <returns>created user</returns>
-    public void Create(M.User user);
+    public Task Create(UserEntity user);
 }

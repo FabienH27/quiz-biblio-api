@@ -11,9 +11,12 @@ namespace QuizBiblio.Controllers;
 [AllowAnonymous]
 public class RbacController(IOptions<List<Role>> roles) : ControllerBase
 {
-
     private readonly List<Role> _roles = roles.Value;
 
+    /// <summary>
+    /// Gets roles
+    /// </summary>
+    /// <returns></returns>
     [HttpGet("roles")]
     public IActionResult GetRoles()
     {

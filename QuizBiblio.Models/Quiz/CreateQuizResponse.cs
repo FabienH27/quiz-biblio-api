@@ -1,6 +1,4 @@
-﻿using MongoDB.Bson;
-
-namespace QuizBiblio.Models.Quiz;
+﻿namespace QuizBiblio.Models.Quiz;
 
 public class CreateQuizResponse
 {

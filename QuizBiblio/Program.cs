@@ -31,10 +31,7 @@ var settings = MongoClientSettings.FromUrl(new MongoUrl(connectionString));
 settings.SslSettings = new SslSettings() { EnabledSslProtocols = System.Security.Authentication.SslProtocols.Tls12 };
 services.AddSingleton<IMongoClient>(new MongoClient(settings));
 
-
-services.AddMongoDB<QuizBiblioDbContext>(connectionString ?? "", dbName ?? "");
 services.AddSingleton<IMongoDbContext, MongoDbContext>();
-
 
 services.Configure<QuizStoreDatabaseSettings>(
     configuration.GetSection("QuizStoreDatabase"));

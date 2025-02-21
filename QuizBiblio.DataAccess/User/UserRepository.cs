@@ -1,22 +1,31 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MongoDB.Bson;
+using MongoDB.Driver;
+using QuizBiblio.DataAccess.QbDbContext;
+using QuizBiblio.Models;
 
 namespace QuizBiblio.DataAccess.User;
 
-public class UserRepository(QuizBiblioDbContext dbContext) : IUserRepository
+public class UserRepository : IUserRepository
 {
-    DbSet<Models.User> Users => dbContext.Users;
 
-    public async Task<List<Models.User>> GetUsers() => await Users.ToListAsync();
+    private readonly IMongoDbContext _dbContext;
 
-    public async Task<Models.User?> GetUser(ObjectId id) => await Users.FirstOrDefaultAsync(user => user.Id == id);
+    IMongoCollection<UserEntity> Users => _dbContext.GetCollection<UserEntity>("Users");
 
-    public async Task<Models.User?> GetUser(string email) => await Users.FirstOrDefaultAsync(user => user.Email == email);
-
-    //Non async : standard use case, refer to Add() method documentation
-    public void Create(Models.User user)
+    public UserRepository(IMongoDbContext dbContext)
     {
-        Users.Add(user);
-        dbContext.SaveChanges();
+        _dbContext = dbContext;
+    }
+
+    public async Task<List<UserEntity>> GetUsers() => await Users.Find(_ => true).ToListAsync();
+
+    public async Task<UserEntity?> GetUser(ObjectId id) => await Users.Find(user => user.Id == id).FirstOrDefaultAsync();
+
+    public async Task<UserEntity?> GetUser(string email) => await Users.Find(user => user.Email == email).FirstOrDefaultAsync();
+
+    public async Task Create(UserEntity user)
+    {
+        await Users.InsertOneAsync(user);
     }
 }

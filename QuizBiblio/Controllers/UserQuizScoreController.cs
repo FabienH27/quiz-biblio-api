@@ -12,12 +12,22 @@ namespace QuizBiblio.Controllers;
 [Route("api/[controller]")]
 public class UserQuizScoreController(IUserQuizScoreService userScoreService) : ControllerBase
 {
+    /// <summary>
+    /// Gets score for a user
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     [HttpGet("{id:length(24)}")]
-    public async Task<UserQuizScoreEntity?> GetUser(string id)
+    public async Task<UserQuizScoreEntity?> GetUserScore(string id)
     {
         return await userScoreService.GetUserScoreAsync(id);
     }
 
+    /// <summary>
+    /// Saves score for a user
+    /// </summary>
+    /// <param name="userScore">score to increment for this user</param>
+    /// <returns></returns>
     [HttpPost]
     [Authorize]
     public async Task SaveUserScore([FromBody] UserScoreRequest userScore)

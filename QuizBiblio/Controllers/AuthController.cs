@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using QuizBiblio.Models;
+using QuizBiblio.Models.Auth;
 using QuizBiblio.Services.User;
 using QuizBiblio.Services.User.Helper;
 using System.IdentityModel.Tokens.Jwt;
@@ -28,10 +28,14 @@ public class AuthController : ControllerBase
         cookieName = jwtSettings.Value.CookieName;
     }
 
+    /// <summary>
+    /// Creates user account
+    /// </summary>
+    /// <param name="request"></param>
     [HttpPost("register")]
     public void Register([FromBody] RegisterRequest request)
     {
-        var user = new User
+        var user = new UserEntity
         {
             Username = request.Username,
             Password = PasswordHelper.HashPassword(request.Password),
@@ -41,6 +45,11 @@ public class AuthController : ControllerBase
         _userService.Create(user);
     }
 
+    /// <summary>
+    /// Authenticates the user
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
@@ -66,6 +75,10 @@ public class AuthController : ControllerBase
         return Unauthorized("Invalid username or password");
     }
 
+    /// <summary>
+    /// Get user information
+    /// </summary>
+    /// <returns></returns>
     [Authorize]
     [HttpGet("user-info")]
     public IActionResult GetUserInfo()
@@ -88,6 +101,10 @@ public class AuthController : ControllerBase
         return Unauthorized();
     }
 
+    /// <summary>
+    /// disconnect the user
+    /// </summary>
+    /// <returns></returns>
     [Authorize]
     [HttpPost("logout")]
     public IActionResult Logout()
@@ -103,6 +120,13 @@ public class AuthController : ControllerBase
         return Ok(new { message = "Logged out successfully" });
     }
 
+    /// <summary>
+    /// Generate a new jwt token from parameters
+    /// </summary>
+    /// <param name="userId">id of the user</param>
+    /// <param name="name">user name</param>
+    /// <param name="role">user role</param>
+    /// <returns></returns>
     private string GenerateJwtToken(string userId, string name, string role)
     {
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Secret));

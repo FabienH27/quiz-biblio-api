@@ -10,7 +10,7 @@ public interface IQuizService
 
     public Task<List<QuizInfo>> GetUserQuizzesAsync(string userId);
 
-    public void CreateQuiz(QuizDto quiz);
+    public Task CreateQuiz(QuizDto quiz);
 
     public Task UpdateQuiz(QuizDto quizDto);
 }
