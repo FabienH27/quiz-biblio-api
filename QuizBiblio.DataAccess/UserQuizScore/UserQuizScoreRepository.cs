@@ -17,6 +17,14 @@ public class UserQuizScoreRepository : IUserQuizScoreRepository
         _dbContext = dbContext;
     }
 
+    public async Task<IAsyncCursor<UserQuizScoreEntity>> GetUserQuizScores()
+    {
+        var sort = Builders<UserQuizScoreEntity>.Sort.Ascending("score");
+        return await UserQuizScores.Find(_ => true)
+            .Sort(sort)
+            .ToCursorAsync();
+    }
+
     public async Task<UserQuizScoreEntity?> GetUserScoreAsync(string userId) {
         var filter = Filters.Eq(scoreEntity => scoreEntity.UserId, userId);
 

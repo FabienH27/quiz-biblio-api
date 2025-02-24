@@ -27,6 +27,7 @@ public class QuizRepository : IQuizRepository
     public async Task<List<QuizInfo>> GetQuizzesAsync()
     {
         return await Quizzes.Find(_ => true)
+            .Limit(10)
             .ProjectToInfo()
             .ToListAsync();
     }
