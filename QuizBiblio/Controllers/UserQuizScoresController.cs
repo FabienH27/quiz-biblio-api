@@ -9,8 +9,9 @@ using System.Security.Claims;
 namespace QuizBiblio.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
-public class UserQuizScoreController(IUserQuizScoreService userScoreService) : ControllerBase
+[Route("api/scores")]
+[Authorize]
+public class UserQuizScoresController(IUserQuizScoreService userScoreService) : ControllerBase
 {
     /// <summary>
     /// Gets score for a user
@@ -23,13 +24,18 @@ public class UserQuizScoreController(IUserQuizScoreService userScoreService) : C
         return await userScoreService.GetUserScoreAsync(id);
     }
 
+    [HttpGet()]
+    public async Task<List<UserQuizScoreEntity>> GetScores()
+    {
+        return await userScoreService.GetUserQuizScores();
+    }
+
     /// <summary>
     /// Saves score for a user
     /// </summary>
     /// <param name="userScore">score to increment for this user</param>
     /// <returns></returns>
     [HttpPost]
-    [Authorize]
     public async Task SaveUserScore([FromBody] UserScoreRequest userScore)
     {
         var userQuizScore = new UserQuizScoreEntity
