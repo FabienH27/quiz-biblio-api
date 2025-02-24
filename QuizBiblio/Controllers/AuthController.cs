@@ -120,6 +120,21 @@ public class AuthController : ControllerBase
         return Ok(new { message = "Logged out successfully" });
     }
 
+
+    /// <summary>
+    /// Checks if the user is authenticated or not
+    /// </summary>
+    /// <returns>401 if not authenticated, "authenticated" flag to true otherwise</returns>
+    [HttpGet("status")]
+    public IActionResult IsAuthenticated()
+    {
+        if (User.Identity?.IsAuthenticated == true)
+        {
+            return Ok(new { authenticated = true });
+        }
+        return Unauthorized();
+    }
+
     /// <summary>
     /// Generate a new jwt token from parameters
     /// </summary>
