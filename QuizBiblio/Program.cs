@@ -1,15 +1,15 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using QuizBiblio.DataAccess;
 using QuizBiblio.Services;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using QuizBiblio;
 using Microsoft.OpenApi.Models;
 using QuizBiblio.Models.Rbac;
 using System.IdentityModel.Tokens.Jwt;
 using MongoDB.Driver;
 using QuizBiblio.DataAccess.QbDbContext;
+using Google.Cloud.Storage.V1;
 using QuizBiblio.Models.DatabaseSettings;
+using QuizBiblio.Models.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,9 +22,11 @@ var configuration = builder.Configuration;
 string? connectionString = configuration.GetValue<string>("QuizStoreDatabase:ConnectionString");
 string? dbName = configuration.GetValue<string>("QuizStoreDatabase:DatabaseName");
 
-var jwtSettings = configuration.GetSection("JwtSettings");
-var secretKey = jwtSettings["Secret"];
 
+//Google Storage Client Settings
+var bucketSettings = configuration.GetSection("BucketSettings");
+services.Configure<BucketSettings>(bucketSettings);
+services.AddSingleton(await StorageClient.CreateAsync());
 
 // MongoDB Settings
 var settings = MongoClientSettings.FromUrl(new MongoUrl(connectionString));
@@ -32,6 +34,11 @@ settings.SslSettings = new SslSettings() { EnabledSslProtocols = System.Security
 services.AddSingleton<IMongoClient>(new MongoClient(settings));
 
 services.AddSingleton<IMongoDbContext, MongoDbContext>();
+
+
+// JWT settings
+var jwtSettings = configuration.GetSection("JwtSettings");
+var secretKey = jwtSettings["Secret"];
 
 services.Configure<QuizStoreDatabaseSettings>(
     configuration.GetSection("QuizStoreDatabase"));

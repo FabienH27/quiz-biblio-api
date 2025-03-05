@@ -18,9 +18,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\QuizBiblio.DataAccess\QuizBiblio.DataAccess.csproj" />
     <ProjectReference Include="..\QuizBiblio.Models\QuizBiblio.Models.csproj" />
     <ProjectReference Include="..\QuizBiblio.Services\QuizBiblio.Services.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Middleware\" />
   </ItemGroup>
 
 </Project>

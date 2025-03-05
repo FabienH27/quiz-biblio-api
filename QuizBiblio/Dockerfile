@@ -25,5 +25,8 @@ RUN dotnet publish "./QuizBiblio.csproj" -c $BUILD_CONFIGURATION -o /app/publish
 # Cette phase est utilisée en production ou lors de l’exécution à partir de VS en mode normal (par défaut quand la configuration de débogage n’est pas utilisée)
 FROM base AS final
 WORKDIR /app
+
+RUN ls -l /app
+
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "QuizBiblio.dll"]
