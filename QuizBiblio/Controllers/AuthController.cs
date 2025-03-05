@@ -4,6 +4,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using QuizBiblio.Models;
 using QuizBiblio.Models.Auth;
+using QuizBiblio.Models.Settings;
 using QuizBiblio.Services.User;
 using QuizBiblio.Services.User.Helper;
 using System.IdentityModel.Tokens.Jwt;
@@ -25,7 +26,7 @@ public class AuthController : ControllerBase
     {
         _userService = userService;
         _jwtSettings = jwtSettings.Value;
-        cookieName = jwtSettings.Value.CookieName;
+        cookieName = _jwtSettings.CookieName;
     }
 
     /// <summary>

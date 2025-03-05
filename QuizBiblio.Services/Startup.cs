@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using QuizBiblio.DataAccess;
+using QuizBiblio.Services.ImageStorage;
 using QuizBiblio.Services.Quiz;
 using QuizBiblio.Services.Theme;
 using QuizBiblio.Services.User;
@@ -18,6 +19,8 @@ public static class Startup
         services.AddScoped<IUserService, UserService>();
         
         services.AddScoped<IThemeService, ThemeService>();
+
+        services.AddScoped<IImageStorageService, ImageStorageService>();
         
         services.AddScoped<IUserQuizScoreService, UserQuizScoreService>();
        
