@@ -7,4 +7,5 @@ namespace QuizBiblio.DataAccess.ImageStorage;
 public interface IImageStorageRepository
 {
     public Task<UploadResult> UploadImageAsync(IFormFile file, string contentType);
+    public Task<string> MoveImageToAssets(string imageUrl);
 }

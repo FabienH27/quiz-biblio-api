@@ -10,7 +10,7 @@ public interface IQuizRepository
 
     public Task<List<QuizInfo>> GetUserQuizzesAsync(string userId);
 
-    public Task CreateQuiz(QuizEntity quiz);
+    public Task<bool> CreateQuiz(QuizEntity quiz);
 
-    public Task UpdateQuiz(QuizEntity quiz);
+    public Task<bool> UpdateQuiz(QuizEntity quiz);
 }

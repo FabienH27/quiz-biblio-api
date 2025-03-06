@@ -22,7 +22,7 @@ public static class MappingHelper
             Id = quiz.Id,
             Title = quiz.Title,
             Creator = quiz.Creator,
-            ImageId = quiz.ImageId,
+            Image = quiz.Image,
             Questions = quiz.Questions,
             Themes = quiz.Themes
         });
@@ -41,7 +41,7 @@ public static class MappingHelper
             Id = q.Id,
             Title = q.Title,
             CreatorName = q.Creator.Name,
-            ImageId = q.ImageId,
+            Image = q.Image,
             Themes = q.Themes,
             QuestionCount = q.Questions.Count
         });

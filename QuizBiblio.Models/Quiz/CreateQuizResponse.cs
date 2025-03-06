@@ -6,7 +6,7 @@ public class CreateQuizResponse
 
     public List<string> Themes { get; set; } = [];
 
-    public string? ImageId { get; set; }
+    public string? Image { get; set; }
 
     public List<Question> Questions { get; set; } = [];
 }

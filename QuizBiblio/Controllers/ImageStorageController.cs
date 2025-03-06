@@ -1,8 +1,6 @@
 ﻿using Google;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.StaticFiles;
-using Microsoft.Extensions.Options;
-using QuizBiblio.Models.Settings;
 using QuizBiblio.Services.Exceptions;
 using QuizBiblio.Services.ImageStorage;
 
@@ -10,6 +8,7 @@ namespace QuizBiblio.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class ImageStorageController : ControllerBase
 {
     private readonly ILogger<ImageStorageController> _logger;
