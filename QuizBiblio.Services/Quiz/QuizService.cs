@@ -50,7 +50,10 @@ public class QuizService : IQuizService
     /// <param name="quiz">quiz to create</param>
     public async Task CreateQuiz(QuizDto quiz)
     {
-        quiz.Image = await UpdateImageLocation(quiz);
+        if (!string.IsNullOrEmpty(quiz.ImageId))
+        {
+            await SaveImageToAssets(quiz.ImageId);
+        }
 
         await _quizRepository.CreateQuiz(quiz.ToEntity());
     }
@@ -62,21 +65,22 @@ public class QuizService : IQuizService
     /// <returns></returns>
     public async Task UpdateQuiz(QuizDto quiz)
     {
-        quiz.Image = await UpdateImageLocation(quiz);
+        if (!string.IsNullOrEmpty(quiz.ImageId))
+        {
+            await SaveImageToAssets(quiz.ImageId);
+        }
 
         await _quizRepository.UpdateQuiz(quiz.ToEntity());
     }
 
-    public async Task<string> UpdateImageLocation(QuizDto quiz)
+    /// <summary>
+    /// Moves the image to assets
+    /// </summary>
+    /// <param name="imageId">id of the image to move</param>
+    /// <returns></returns>
+    public async Task SaveImageToAssets(string imageId)
     {
-        if (!string.IsNullOrEmpty(quiz.Image) && quiz.Image.Contains(_bucketSettings.TemporaryImageLocation))
-        {
-            var newImageUrl = await _imageStorageService.MoveImageToAssetsAsync(quiz.Image);
+        await _imageStorageService.MoveImageToAssetsAsync(imageId);
 
-            //if moving the image did not succeed : set empty string
-            quiz.Image = string.IsNullOrEmpty(newImageUrl) ? string.Empty : newImageUrl;
-        }
-
-        return quiz.Image ?? string.Empty;
     }
 }

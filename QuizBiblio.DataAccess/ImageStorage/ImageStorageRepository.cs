@@ -3,6 +3,8 @@ using Google.Cloud.Storage.V1;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using MongoDB.Driver;
+using QuizBiblio.DataAccess.QbDbContext;
 using QuizBiblio.Models.Image;
 using QuizBiblio.Models.Settings;
 
@@ -12,6 +14,7 @@ public class ImageStorageRepository : IImageStorageRepository
 {
 
     private readonly ILogger<ImageStorageRepository> _logger;
+    private readonly IMongoDbContext _dbContext;
 
     private readonly StorageClient _storageClient;
     private readonly BucketSettings _bucketSettings;
@@ -20,10 +23,15 @@ public class ImageStorageRepository : IImageStorageRepository
     private readonly string _assetsLocation;
     private readonly string _bucketName;
 
+    IMongoCollection<ImageEntity> Images => _dbContext.GetCollection<ImageEntity>("Images");
+
     public ImageStorageRepository(ILogger<ImageStorageRepository> logger,
+        IMongoDbContext dbContext,
         StorageClient storageClient, IOptions<BucketSettings> bucketSettings)
     {
         _logger = logger;
+
+        _dbContext = dbContext;
         
         _storageClient = storageClient;
         _bucketSettings = bucketSettings.Value;
@@ -33,6 +41,12 @@ public class ImageStorageRepository : IImageStorageRepository
         _assetsLocation = _bucketSettings.QuizImageAssetsLocation;
     }
 
+    /// <summary>
+    /// Uploads the image on the bucket and creates an entry on the MongoDB collection
+    /// </summary>
+    /// <param name="file">image to upload to bucket</param>
+    /// <param name="contentType">content type of the image</param>
+    /// <returns>an object containing the id of the new image</returns>
     public async Task<UploadResult> UploadImageAsync(IFormFile file, string contentType)
     {
         using var stream = file.OpenReadStream();
@@ -50,35 +64,60 @@ public class ImageStorageRepository : IImageStorageRepository
             stream
             );
 
+        var imageEntity = new ImageEntity
+        {
+            Url = storageLocation,
+            CreatedAt = DateTime.UtcNow
+        };
+
+        await Images.InsertOneAsync(imageEntity);
+
         return new UploadResult
         {
+            ImageId = imageEntity.Id,
             ImageUrl = storageLocation
         };
     }
 
-
-    public async Task<string> MoveImageToAssets(string imageUrl)
+    public async Task MoveImageToAssets(string imageId)
     {
-        var splitUrl = imageUrl.Split('/', StringSplitOptions.RemoveEmptyEntries);
-        string imageName = splitUrl.Last();
+        var image = await GetImageAsync(imageId);
 
-        string tempPath = $"{_tempLocation}/{imageName}";
-        string finalPath = $"{_assetsLocation}/{imageName}";
-
-        try
+        if(image != null)
         {
-            var response = await _storageClient.CopyObjectAsync(
-                _bucketName, tempPath,
-                _bucketName, finalPath
-            );
+            var splitUrl = image.Url.Split('/', StringSplitOptions.RemoveEmptyEntries);
+            string imageName = splitUrl.Last();
 
-            await _storageClient.DeleteObjectAsync(_bucketName, tempPath);
-            return finalPath;
-        }catch(GoogleApiException ex)
-        {
-            _logger.LogError("Could not move image : {Message}", ex.Message);
-            return string.Empty;
+            string tempPath = $"{_tempLocation}/{imageName}";
+            string finalPath = $"{_assetsLocation}/{imageName}";
+
+            try
+            {
+                var response = await _storageClient.CopyObjectAsync(
+                    _bucketName, tempPath,
+                    _bucketName, finalPath
+                );
+
+                await _storageClient.DeleteObjectAsync(_bucketName, tempPath);
+
+                var filter = Builders<ImageEntity>.Filter.Eq(img => img.Id, image.Id);
+                var update = Builders<ImageEntity>.Update.Set(img => img.Url, finalPath);
+
+                await Images.FindOneAndUpdateAsync(filter, update);
+
+            }catch(GoogleApiException ex)
+            {
+                _logger.LogError("Could not move image : {Message}", ex.Message);
+            }
         }
+        else
+        {
+            _logger.LogError("Could not move image.");
+        }
+    }
 
+    public async Task<ImageEntity> GetImageAsync(string imageId)
+    {
+        return await Images.Find(image => image.Id == imageId).FirstOrDefaultAsync();
     }
 }

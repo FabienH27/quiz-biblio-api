@@ -47,8 +47,18 @@ public class ImageStorageService : IImageStorageService
         return await _imageStorageRepository.UploadImageAsync(file, contentType);
     }
 
-    public async Task<string> MoveImageToAssetsAsync(string imageUrl)
+    public async Task MoveImageToAssetsAsync(string imageId)
     {
-        return await _imageStorageRepository.MoveImageToAssets(imageUrl);
+        await _imageStorageRepository.MoveImageToAssets(imageId);
+    }
+
+    public async Task<ImageDto> GetImageAsync(string imageId)
+    {
+        var result = await _imageStorageRepository.GetImageAsync(imageId);
+
+        return new ImageDto
+        {
+            Url = result.Url
+        };
     }
 }

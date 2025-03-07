@@ -16,7 +16,7 @@ public static class DtoHelper
         {
             Id = quizDto.Id,
             Title = quizDto.Title,
-            Image = quizDto.Image,
+            ImageId = quizDto.ImageId,
             Questions = quizDto.Questions,
             Themes = quizDto.Themes,
             Creator = quizDto.Creator
@@ -34,7 +34,7 @@ public static class DtoHelper
         return new QuizDto
         {
             Title = quiz.Title,
-            Image = quiz.Image,
+            ImageId = quiz.ImageId,
             Questions = quiz.Questions,
             Themes = quiz.Themes,
             Creator = user

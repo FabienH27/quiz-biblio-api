@@ -15,8 +15,9 @@ public class QuizEntity
     [BsonElement("themes")]
     public List<string> Themes { get; set; } = [];
 
-    [BsonElement("image")]
-    public string? Image { get; set; }
+    [BsonElement("imageId")]
+    [BsonRepresentation(BsonType.ObjectId)]
+    public string? ImageId { get; set; }
 
     [BsonElement("questions")]
     public List<Question> Questions { get; set; } = [];
