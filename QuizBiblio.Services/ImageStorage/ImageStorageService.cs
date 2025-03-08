@@ -58,7 +58,7 @@ public class ImageStorageService : IImageStorageService
 
         return new ImageDto
         {
-            Url = result.Url
+            Url = result?.Url ?? null
         };
     }
 }
