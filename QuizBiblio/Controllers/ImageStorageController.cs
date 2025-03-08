@@ -1,8 +1,7 @@
 ﻿using Google;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.StaticFiles;
-using Microsoft.Extensions.Options;
-using QuizBiblio.Models.Settings;
+using QuizBiblio.Models.Image;
 using QuizBiblio.Services.Exceptions;
 using QuizBiblio.Services.ImageStorage;
 
@@ -10,6 +9,7 @@ namespace QuizBiblio.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class ImageStorageController : ControllerBase
 {
     private readonly ILogger<ImageStorageController> _logger;
@@ -31,7 +31,7 @@ public class ImageStorageController : ControllerBase
         {
             var uploadResult = await _imageStorageService.UploadImageAsync(file);
 
-            return Ok(new { message = "File uploaded successfully.", url = uploadResult.ImageUrl });
+            return Ok(new { message = "File uploaded successfully.", id = uploadResult.ImageId, url = uploadResult.ImageUrl });
         
         }catch(GoogleApiException ex)
         {
@@ -40,5 +40,16 @@ public class ImageStorageController : ControllerBase
         {
             return BadRequest($"An error occured while uploading image : {uploadEx.Message}");
         }
+    }
+
+    /// <summary>
+    /// Gets an image from a given id
+    /// </summary>
+    /// <param name="imageId">id of the image to fetch</param>
+    /// <returns>url of the image</returns>
+    [HttpGet("{imageId}")]
+    public async Task<ImageDto> GetImageAsync(string imageId)
+    {
+        return await _imageStorageService.GetImageAsync(imageId);
     }
 }
