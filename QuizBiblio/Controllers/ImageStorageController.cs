@@ -48,6 +48,7 @@ public class ImageStorageController : ControllerBase
     /// <param name="imageId">id of the image to fetch</param>
     /// <returns>url of the image</returns>
     [HttpGet("{imageId}")]
+    [AllowAnonymous]
     public async Task<ImageDto> GetImageAsync(string imageId)
     {
         return await _imageStorageService.GetImageAsync(imageId);

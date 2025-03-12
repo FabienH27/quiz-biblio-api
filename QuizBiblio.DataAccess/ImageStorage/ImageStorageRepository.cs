@@ -5,8 +5,10 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using QuizBiblio.DataAccess.QbDbContext;
+using QuizBiblio.DataAccess.Utils;
 using QuizBiblio.Models.Image;
 using QuizBiblio.Models.Settings;
+using System.Security.Cryptography.X509Certificates;
 
 namespace QuizBiblio.DataAccess.ImageStorage;
 
@@ -66,7 +68,7 @@ public class ImageStorageRepository : IImageStorageRepository
 
         var imageEntity = new ImageEntity
         {
-            Url = storageLocation,
+            OriginalUrl = storageLocation,
             CreatedAt = DateTime.UtcNow
         };
 
@@ -85,11 +87,12 @@ public class ImageStorageRepository : IImageStorageRepository
 
         if(image != null)
         {
-            var splitUrl = image.Url.Split('/', StringSplitOptions.RemoveEmptyEntries);
+            var splitUrl = image.OriginalUrl.Split('/', StringSplitOptions.RemoveEmptyEntries);
             string imageName = splitUrl.Last();
 
             string tempPath = $"{_tempLocation}/{imageName}";
             string finalPath = $"{_assetsLocation}/{imageName}";
+            string resizedImageUrl = ImageHelper.GetResizedUrl(finalPath, _bucketSettings.ResizedImageWidth);
 
             try
             {
@@ -101,7 +104,9 @@ public class ImageStorageRepository : IImageStorageRepository
                 await _storageClient.DeleteObjectAsync(_bucketName, tempPath);
 
                 var filter = Builders<ImageEntity>.Filter.Eq(img => img.Id, image.Id);
-                var update = Builders<ImageEntity>.Update.Set(img => img.Url, finalPath);
+                var update = Builders<ImageEntity>.Update
+                    .Set(img => img.OriginalUrl, finalPath)
+                    .Set(img => img.ResizedUrl, resizedImageUrl);
 
                 await Images.FindOneAndUpdateAsync(filter, update);
 
