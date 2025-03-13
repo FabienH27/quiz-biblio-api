@@ -8,5 +8,8 @@ namespace QuizBiblio.Models.Image;
 
 public class ImageDto
 {
-    public string? Url { get; set; }
+    public required string OriginalUrl { get; set; }
+
+    public string? ResizedUrl { get; set; }
+
 }

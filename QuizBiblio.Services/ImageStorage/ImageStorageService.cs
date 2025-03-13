@@ -58,7 +58,8 @@ public class ImageStorageService : IImageStorageService
 
         return new ImageDto
         {
-            Url = result?.Url ?? null
+            OriginalUrl = result.OriginalUrl,
+            ResizedUrl = result.ResizedUrl
         };
     }
 }

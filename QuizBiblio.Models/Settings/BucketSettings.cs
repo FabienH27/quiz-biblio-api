@@ -7,4 +7,6 @@ public class BucketSettings
     public required string TemporaryImageLocation { get; init; }
 
     public required string QuizImageAssetsLocation { get; init; }
+
+    public required int ResizedImageWidth { get; set; }
 }

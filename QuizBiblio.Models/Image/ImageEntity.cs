@@ -9,7 +9,9 @@ public class ImageEntity
     [BsonRepresentation(BsonType.ObjectId)]
     public string Id { get; set; } = ObjectId.GenerateNewId().ToString();
 
-    public required string Url { get; set; }
+    public required string OriginalUrl { get; set; }
+
+    public string ResizedUrl { get; set; } = string.Empty;
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }
