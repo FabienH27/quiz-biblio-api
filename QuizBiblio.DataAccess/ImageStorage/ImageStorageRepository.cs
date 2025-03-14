@@ -8,7 +8,6 @@ using QuizBiblio.DataAccess.QbDbContext;
 using QuizBiblio.DataAccess.Utils;
 using QuizBiblio.Models.Image;
 using QuizBiblio.Models.Settings;
-using System.Security.Cryptography.X509Certificates;
 
 namespace QuizBiblio.DataAccess.ImageStorage;
 
