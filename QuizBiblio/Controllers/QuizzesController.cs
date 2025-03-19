@@ -73,4 +73,12 @@ public class QuizzesController(IQuizService quizService) : ControllerBase
 
         return NoContent();
     }
+
+    [HttpDelete("{quizId}")]
+    public async Task<IActionResult> DeleteQuiz([FromRoute] string quizId)
+    {
+        await quizService.DeleteQuizAsync(quizId);
+
+        return NoContent();
+    }
 }

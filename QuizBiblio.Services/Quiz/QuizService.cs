@@ -83,4 +83,9 @@ public class QuizService : IQuizService
         await _imageStorageService.MoveImageToAssetsAsync(imageId);
 
     }
+
+    public async Task DeleteQuizAsync(string quizId)
+    {
+        await _quizRepository.DeleteQuizAsync(quizId);
+    }
 }
