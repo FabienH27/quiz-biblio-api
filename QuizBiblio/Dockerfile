@@ -4,8 +4,7 @@
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
 USER app
 WORKDIR /app
-EXPOSE 80
-EXPOSE 443
+EXPOSE 8080
 
 # Cette phase est utilisée pour générer le projet de service
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
@@ -25,8 +24,6 @@ RUN dotnet publish "./QuizBiblio.csproj" -c $BUILD_CONFIGURATION -o /app/publish
 # Cette phase est utilisée en production ou lors de l’exécution à partir de VS en mode normal (par défaut quand la configuration de débogage n’est pas utilisée)
 FROM base AS final
 WORKDIR /app
-
-RUN ls -l /app
 
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "QuizBiblio.dll"]
