@@ -97,4 +97,18 @@ public class QuizRepository : IQuizRepository
             return false;
         }
     }
+
+    public async Task DeleteQuizAsync(string quizId)
+    {
+        try
+        {
+            var filter = Filters.Eq(q => q.Id, quizId);
+            await Quizzes.DeleteOneAsync(filter);
+        }
+        catch(MongoException ex)
+        {
+            _logger.LogError("Could not delete quiz: {Message}", ex.Message);
+        }
+
+    }
 }

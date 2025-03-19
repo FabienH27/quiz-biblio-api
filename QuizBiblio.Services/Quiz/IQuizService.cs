@@ -13,4 +13,6 @@ public interface IQuizService
     public Task CreateQuiz(QuizDto quiz);
 
     public Task UpdateQuiz(QuizDto quizDto);
+
+    public Task DeleteQuizAsync(string quizId);
 }

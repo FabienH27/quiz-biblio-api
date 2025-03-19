@@ -13,4 +13,6 @@ public interface IQuizRepository
     public Task<bool> CreateQuiz(QuizEntity quiz);
 
     public Task<bool> UpdateQuiz(QuizEntity quiz);
+
+    public Task DeleteQuizAsync(string quizId);
 }
