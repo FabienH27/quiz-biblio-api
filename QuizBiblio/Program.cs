@@ -29,12 +29,11 @@ services.Configure<BucketSettings>(bucketSettings);
 services.AddSingleton(await StorageClient.CreateAsync());
 
 // MongoDB Settings
-var settings = MongoClientSettings.FromUrl(new MongoUrl(connectionString));
+var settings = MongoClientSettings.FromConnectionString(connectionString);
 settings.SslSettings = new SslSettings() { EnabledSslProtocols = System.Security.Authentication.SslProtocols.Tls12 };
 services.AddSingleton<IMongoClient>(new MongoClient(settings));
 
 services.AddSingleton<IMongoDbContext, MongoDbContext>();
-
 
 // JWT settings
 var jwtSettings = configuration.GetSection("JwtSettings");
