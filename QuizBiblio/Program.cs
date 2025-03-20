@@ -25,6 +25,7 @@ string? dbName = configuration.GetValue<string>("QuizStoreDatabase:DatabaseName"
 //Google Storage Client Settings
 var bucketSettings = configuration.GetSection("BucketSettings");
 services.Configure<BucketSettings>(bucketSettings);
+
 services.AddSingleton(await StorageClient.CreateAsync());
 
 // MongoDB Settings
