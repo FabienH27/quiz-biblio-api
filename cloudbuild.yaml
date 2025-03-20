@@ -23,7 +23,7 @@ steps:
 images:
   - 'gcr.io/$PROJECT_ID/quizbiblio'
 
-timeout: 600s
+timeout: 500s
 
 options:
   logging: CLOUD_LOGGING_ONLY
