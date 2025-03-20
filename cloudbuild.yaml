@@ -11,13 +11,13 @@ steps:
       - '-c'
       - |
         gcloud run deploy quiz-biblio-api \
-        --image='gcr.io/$PROJECT_ID/quizbiblio' \
+        --image="gcr.io/$PROJECT_ID/quizbiblio" \
         --set-env-vars=ASPNETCORE_ENVIRONMENT=Production \
         --set-env-vars=ASPNETCORE_URLS="http://+:8080" \
-        --set-env-vars="GOOGLE_CLOUD_PROJECT="$(gcloud config get-value project)" \
+        --set-env-vars=GOOGLE_CLOUD_PROJECT="$(gcloud config get-value project)" \
         --platform=managed \
         --region=europe-west9 \
-        --project="$(gcloud config get-value project)"" \
+        --project="$(gcloud config get-value project)" \
         && gcloud run services update-traffic quiz-biblio-api --to-latest
 
 images:
