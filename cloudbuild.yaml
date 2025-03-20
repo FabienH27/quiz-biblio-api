@@ -19,7 +19,7 @@ steps:
         --platform=managed \
         --region=europe-west9 \
         --project="$(gcloud config get-value project)" \
-        && gcloud run services update-traffic quiz-biblio-api --to-latest
+        && gcloud run services update-traffic quiz-biblio-api --to-latest --region=europe-west9
 
 images:
   - 'gcr.io/$PROJECT_ID/quizbiblio'
