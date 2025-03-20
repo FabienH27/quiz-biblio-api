@@ -22,7 +22,6 @@ var configuration = builder.Configuration;
 string? connectionString = configuration.GetValue<string>("QuizStoreDatabase:ConnectionString");
 string? dbName = configuration.GetValue<string>("QuizStoreDatabase:DatabaseName");
 
-
 //Google Storage Client Settings
 var bucketSettings = configuration.GetSection("BucketSettings");
 services.Configure<BucketSettings>(bucketSettings);
@@ -126,6 +125,9 @@ services.AddControllers();
 services.AddServices();
 
 var app = builder.Build();
+
+var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+app.Urls.Add($"http://+:{port}");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
