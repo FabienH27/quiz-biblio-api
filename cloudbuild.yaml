@@ -13,6 +13,7 @@ steps:
         gcloud run deploy quiz-biblio-api \
         --service-account=quiz-biblio-storage-api@xenon-timer-438013-s1.iam.gserviceaccount.com \
         --image="gcr.io/$PROJECT_ID/quizbiblio" \
+        --vpc-connector=my-vpc \
         --set-env-vars=ASPNETCORE_ENVIRONMENT=Production \
         --set-env-vars=ASPNETCORE_URLS="http://+:8080" \
         --set-env-vars=GOOGLE_CLOUD_PROJECT="$(gcloud config get-value project)" \
