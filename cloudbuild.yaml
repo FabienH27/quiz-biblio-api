@@ -5,8 +5,25 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 'gcr.io/$PROJECT_ID/quizbiblio']
 
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'bash'
+    args: 
+      - '-c'
+      - |
+        gcloud run deploy quiz-biblio-api \
+        --image='gcr.io/$PROJECT_ID/quizbiblio' \
+        --set-env-vars=ASPNETCORE_ENVIRONMENT=Production \
+        --set-env-vars="ASPNETCORE_URLS=http://+:8080 \
+        --set-env-vars="GOOGLE_CLOUD_PROJECT=$(gcloud config get-value project)" \
+        --platform=managed \
+        --region=europe-west9 \
+        --project=$(gcloud config get-value project)" \
+        && gcloud run services update-traffic quiz-biblio-api --to-latest
+
 images:
   - 'gcr.io/$PROJECT_ID/quizbiblio'
+
+timeout: 600s
 
 options:
   logging: CLOUD_LOGGING_ONLY

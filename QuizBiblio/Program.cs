@@ -10,6 +10,7 @@ using QuizBiblio.DataAccess.QbDbContext;
 using Google.Cloud.Storage.V1;
 using QuizBiblio.Models.DatabaseSettings;
 using QuizBiblio.Models.Settings;
+using QuizBiblio.Helper;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,7 +20,7 @@ JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); // Avoid renaming cl
 var services = builder.Services;
 var configuration = builder.Configuration;
 
-string? connectionString = configuration.GetValue<string>("QuizStoreDatabase:ConnectionString");
+//string? connectionString = configuration.GetValue<string>("QuizStoreDatabase:ConnectionString");
 string? dbName = configuration.GetValue<string>("QuizStoreDatabase:DatabaseName");
 
 //Google Storage Client Settings
@@ -28,6 +29,8 @@ services.Configure<BucketSettings>(bucketSettings);
 services.AddSingleton(await StorageClient.CreateAsync());
 
 // MongoDB Settings
+var connectionString = SecretManagerHelper.GetConnectionStringFromSecretManage("quiz-database-connection");
+
 var settings = MongoClientSettings.FromConnectionString(connectionString);
 settings.SslSettings = new SslSettings() { EnabledSslProtocols = System.Security.Authentication.SslProtocols.Tls12 };
 services.AddSingleton<IMongoClient>(new MongoClient(settings));
