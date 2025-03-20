@@ -20,7 +20,6 @@ JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); // Avoid renaming cl
 var services = builder.Services;
 var configuration = builder.Configuration;
 
-//string? connectionString = configuration.GetValue<string>("QuizStoreDatabase:ConnectionString");
 string? dbName = configuration.GetValue<string>("QuizStoreDatabase:DatabaseName");
 
 //Google Storage Client Settings
