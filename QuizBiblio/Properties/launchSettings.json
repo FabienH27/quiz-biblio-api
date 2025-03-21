@@ -36,14 +36,15 @@
         "ASPNETCORE_HTTPS_PORTS": "8081",
         "ASPNETCORE_HTTP_PORTS": "8080",
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "GOOGLE_APPLICATION_CREDENTIALS": "/app/secrets/application_default_credentials.json"
+        "GOOGLE_APPLICATION_CREDENTIALS": "/app/secrets/application_default_credentials.json",
+        "MONGODB_CONNECTION_STRING": "mongodb://localhost:27017/"
       },
       "publishAllPorts": true,
       "useSSL": true,
-      "httpPort": 80,
-      "sslPort": 443
+      "httpPort": 8080,
+      "sslPort": 8081
     },
-    "Production-Cloud": {
+    "Docker Prod": {
       "commandName": "Docker",
       "launchBrowser": true,
       "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/swagger",
