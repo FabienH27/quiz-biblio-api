@@ -21,6 +21,7 @@ public class UserQuizScoreRepository : IUserQuizScoreRepository
     {
         var sort = Builders<UserQuizScoreEntity>.Sort.Ascending("score");
         return await UserQuizScores.Find(_ => true)
+            .Limit(10)
             .Sort(sort)
             .ToCursorAsync();
     }
