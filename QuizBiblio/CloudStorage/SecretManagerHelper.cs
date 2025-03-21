@@ -4,7 +4,7 @@ namespace QuizBiblio.Helper;
 
 public class SecretManagerHelper
 {
-    public static string GetConnectionStringFromSecretManage(string secretName)
+    public static string GetConnectionStringFromSecretManager(string secretName)
     {
         var projectId = Environment.GetEnvironmentVariable("GOOGLE_CLOUD_PROJECT") ?? "xenon-timer-438013-s1";
         SecretManagerServiceClient secretManagerServiceClient = SecretManagerServiceClient.Create();

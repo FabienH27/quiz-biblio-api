@@ -29,7 +29,12 @@ services.Configure<BucketSettings>(bucketSettings);
 services.AddSingleton(await StorageClient.CreateAsync());
 
 // MongoDB Settings
-var connectionString = SecretManagerHelper.GetConnectionStringFromSecretManage("quiz-database-connection");
+var connectionString = SecretManagerHelper.GetConnectionStringFromSecretManager("quiz-database-connection");
+
+if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
+{
+    connectionString = configuration.GetConnectionString("QuizStoreDatabase");
+}
 
 var settings = MongoClientSettings.FromConnectionString(connectionString);
 settings.SslSettings = new SslSettings() { EnabledSslProtocols = System.Security.Authentication.SslProtocols.Tls12 };
@@ -127,9 +132,6 @@ services.AddControllers();
 
 services.AddServices();
 
-var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
-var url = $"http://0.0.0.0:{port}";
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -148,4 +150,14 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.Run(url);
+if (app.Environment.IsDevelopment())
+{
+    app.Run();
+}
+else
+{
+    var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+    var url = $"http://0.0.0.0:{port}";
+    app.Run();
+}
+
