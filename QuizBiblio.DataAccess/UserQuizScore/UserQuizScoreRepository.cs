@@ -1,6 +1,5 @@
 ﻿using MongoDB.Driver;
 using QuizBiblio.DataAccess.QbDbContext;
-using QuizBiblio.Models;
 using QuizBiblio.Models.UserQuiz;
 
 namespace QuizBiblio.DataAccess.UserQuizScore;
@@ -19,7 +18,7 @@ public class UserQuizScoreRepository : IUserQuizScoreRepository
 
     public async Task<IAsyncCursor<UserQuizScoreEntity>> GetUserQuizScores()
     {
-        var sort = Builders<UserQuizScoreEntity>.Sort.Ascending("score");
+        var sort = Builders<UserQuizScoreEntity>.Sort.Descending("Score");
         return await UserQuizScores.Find(_ => true)
             .Limit(10)
             .Sort(sort)
