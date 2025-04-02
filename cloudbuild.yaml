@@ -17,9 +17,9 @@ steps:
         --set-env-vars=ASPNETCORE_URLS="http://+:8080" \
         --set-env-vars=GOOGLE_CLOUD_PROJECT="$(gcloud config get-value project)" \
         --platform=managed \
-        --region=europe-west9 \
+        --region=europe-west1 \
         --project="$(gcloud config get-value project)" \
-        && gcloud run services update-traffic quiz-biblio-api --to-latest --region=europe-west9
+        && gcloud run services update-traffic quiz-biblio-api --to-latest --region=europe-west1
 
 images:
   - 'gcr.io/$PROJECT_ID/quizbiblio'
