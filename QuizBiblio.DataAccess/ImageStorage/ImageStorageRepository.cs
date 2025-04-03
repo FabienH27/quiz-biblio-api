@@ -105,7 +105,8 @@ public class ImageStorageRepository : IImageStorageRepository
                 var filter = Builders<ImageEntity>.Filter.Eq(img => img.Id, image.Id);
                 var update = Builders<ImageEntity>.Update
                     .Set(img => img.OriginalUrl, finalPath)
-                    .Set(img => img.ResizedUrl, resizedImageUrl);
+                    .Set(img => img.ResizedUrl, resizedImageUrl)
+                    .Set(img => img.IsPermanent, true);
 
                 await Images.FindOneAndUpdateAsync(filter, update);
 
@@ -120,8 +121,52 @@ public class ImageStorageRepository : IImageStorageRepository
         }
     }
 
+    /// <summary>
+    /// Gets an image from an image id
+    /// </summary>
+    /// <param name="imageId">id of the document</param>
+    /// <returns></returns>
     public async Task<ImageEntity> GetImageAsync(string imageId)
     {
         return await Images.Find(image => image.Id == imageId).FirstOrDefaultAsync();
+    }
+
+    /// <summary>
+    /// Delete images stored in the temporary asset folder
+    /// </summary>
+    /// <returns></returns>
+    public async Task<bool> DeleteTemporaryImages()
+    {
+        var result = _storageClient.ListObjectsAsync(_bucketName, _tempLocation);
+
+        var data = await result.ReadPageAsync(50);
+
+        var deletedImages = new List<string>();
+
+        foreach(var image in data)
+        {
+            try
+            {
+                await _storageClient.DeleteObjectAsync(image);
+                deletedImages.Add(image.Id);
+            }catch(GoogleApiException apiException)
+            {
+                _logger.LogError("Failure while deleting image on Cloud Storage : {apiException}", apiException);
+            }           
+        }
+
+        //Only delete image documents if deleted image count match the initial image count to delete
+        if(deletedImages.Count == data.Count())
+        {
+            //Deletes images if they are marked as permanent OR folder points out to the temporary folder
+            await Images.DeleteManyAsync(image => image.IsPermanent == false || image.OriginalUrl.StartsWith(_tempLocation));
+            return true;
+        }
+        else
+        {
+            _logger.LogWarning("Did not delete documents as an error occured while deleting images in Cloud Storage");
+        }
+
+        return false;
     }
 }

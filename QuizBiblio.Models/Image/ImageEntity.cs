@@ -13,5 +13,7 @@ public class ImageEntity
 
     public string ResizedUrl { get; set; } = string.Empty;
 
+    public bool? IsPermanent { get; set; }
+
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }
