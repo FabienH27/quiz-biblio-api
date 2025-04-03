@@ -8,7 +8,7 @@ namespace QuizBiblio.JobScheduler;
 
 public static class Startup
 {
-    public static IServiceCollection AddJobScheduler(this IServiceCollection services, string connectionString)
+    public static IServiceCollection AddJobScheduler(this IServiceCollection services, string connectionString, string databaseName)
     {
         var options = new MongoStorageOptions
         {
@@ -24,7 +24,7 @@ public static class Startup
             .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
             .UseSimpleAssemblyNameTypeSerializer()
             .UseRecommendedSerializerSettings()
-            .UseMongoStorage(connectionString, options)
+            .UseMongoStorage(connectionString, databaseName, options)
         );
 
         services.AddHangfireServer(serverOptions =>

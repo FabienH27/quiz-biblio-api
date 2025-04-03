@@ -51,7 +51,7 @@ services.AddSingleton<IMongoDbContext, MongoDbContext>();
 
 if(connectionString != null && dbName != null)
 {
-    services.AddJobScheduler(connectionString+dbName);
+    services.AddJobScheduler(connectionString,dbName);
 }
 
 // JWT settings
