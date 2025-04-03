@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuizBiblio.DataAccess", "Qu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuizBiblio.Services", "QuizBiblio.Services\QuizBiblio.Services.csproj", "{B9B48964-0D3C-49CA-B05E-DE10547A3E8A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuizBiblio.JobScheduler", "QuizBiblio.JobScheduler\QuizBiblio.JobScheduler.csproj", "{6513FB47-C57C-41C8-9F22-25E3D159C964}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{B9B48964-0D3C-49CA-B05E-DE10547A3E8A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B9B48964-0D3C-49CA-B05E-DE10547A3E8A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B9B48964-0D3C-49CA-B05E-DE10547A3E8A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6513FB47-C57C-41C8-9F22-25E3D159C964}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6513FB47-C57C-41C8-9F22-25E3D159C964}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6513FB47-C57C-41C8-9F22-25E3D159C964}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6513FB47-C57C-41C8-9F22-25E3D159C964}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

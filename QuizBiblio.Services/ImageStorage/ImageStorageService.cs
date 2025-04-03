@@ -2,9 +2,7 @@
 using Microsoft.AspNetCore.StaticFiles;
 using QuizBiblio.DataAccess.ImageStorage;
 using QuizBiblio.Models.Image;
-using QuizBiblio.Models.Settings;
 using QuizBiblio.Services.Exceptions;
-using GS = Google.Apis.Storage.v1.Data;
 
 namespace QuizBiblio.Services.ImageStorage;
 
@@ -18,6 +16,12 @@ public class ImageStorageService : IImageStorageService
         _imageStorageRepository = imageStorageRepository;
     }
 
+    /// <summary>
+    /// Uploads an image to temporary folder
+    /// </summary>
+    /// <param name="file">fiile data to upload</param>
+    /// <returns>image id and url</returns>
+    /// <exception cref="ImageUploadExcention">exception thrown in case of invalid data</exception>
     public async Task<UploadResult> UploadImageAsync(IFormFile file)
     {
         if (file == null || file.Length == 0)
@@ -47,11 +51,21 @@ public class ImageStorageService : IImageStorageService
         return await _imageStorageRepository.UploadImageAsync(file, contentType);
     }
 
+    /// <summary>
+    /// Moves image to asset once the user assigned it to a quiz
+    /// </summary>
+    /// <param name="imageId">id of the image to move</param>
+    /// <returns></returns>
     public async Task MoveImageToAssetsAsync(string imageId)
     {
         await _imageStorageRepository.MoveImageToAssets(imageId);
     }
 
+    /// <summary>
+    /// Gets an image from image id
+    /// </summary>
+    /// <param name="imageId">id of the document</param>
+    /// <returns></returns>
     public async Task<ImageDto> GetImageAsync(string imageId)
     {
         var result = await _imageStorageRepository.GetImageAsync(imageId);
@@ -59,7 +73,17 @@ public class ImageStorageService : IImageStorageService
         return new ImageDto
         {
             OriginalUrl = result.OriginalUrl,
-            ResizedUrl = result.ResizedUrl
+            ResizedUrl = result.ResizedUrl,
+            IsPermanent = result.IsPermanent,
         };
+    }
+
+    /// <summary>
+    /// Deletes temporary images
+    /// </summary>
+    /// <returns>whether images were successfully deleted</returns>
+    public async Task<bool> DeleteTemporaryImages()
+    {
+        return await _imageStorageRepository.DeleteTemporaryImages();
     }
 }

@@ -11,6 +11,13 @@ using Google.Cloud.Storage.V1;
 using QuizBiblio.Models.DatabaseSettings;
 using QuizBiblio.Models.Settings;
 using QuizBiblio.Helper;
+using Hangfire;
+using Hangfire.Mongo;
+using Hangfire.Mongo.Migration.Strategies;
+using Hangfire.Mongo.Migration.Strategies.Backup;
+using QuizBiblio.JobScheduler;
+using Hangfire.Dashboard;
+using QuizBiblio.JobScheduler.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,6 +48,11 @@ settings.SslSettings = new SslSettings() { EnabledSslProtocols = System.Security
 services.AddSingleton<IMongoClient>(new MongoClient(settings));
 
 services.AddSingleton<IMongoDbContext, MongoDbContext>();
+
+if(connectionString != null && dbName != null)
+{
+    services.AddJobScheduler(connectionString+dbName);
+}
 
 // JWT settings
 var jwtSettings = configuration.GetSection("JwtSettings");
@@ -141,6 +153,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseHangfireDashboard("/jobs", new DashboardOptions
+{
+    Authorization = [new NoAuthFilter()]
+});
+
 app.UseHttpsRedirection();
 
 app.UseCors(CORSOpenPolicy);
@@ -149,6 +166,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+JobsInitializer.StartJobs();
 
 if (app.Environment.IsDevelopment())
 {
