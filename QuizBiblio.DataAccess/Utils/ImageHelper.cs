@@ -17,6 +17,7 @@ public static class ImageHelper
     /// <returns>url with following suffix : *_800x800.webp </returns>
     public static string GetResizedUrl(string filePath, int width)
     {
-        return filePath.Replace(".png", $"_{width}x{width}.webp");
+
+        return filePath.Replace("/\\.(gif|jpe?g|tiff?|png|webp|bmp)$/i", $"_{width}x{width}.webp");
     }
 }

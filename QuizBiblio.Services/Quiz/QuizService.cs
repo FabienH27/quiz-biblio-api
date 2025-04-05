@@ -70,6 +70,13 @@ public class QuizService : IQuizService
             await SaveImageToAssets(quiz.ImageId);
         }
 
+        var questionImages = quiz.Questions.Select(x => x.ImageId).OfType<string>().ToList();
+
+        foreach (var questionImage in questionImages)
+        {
+            await SaveImageToAssets(questionImage);
+        }
+
         await _quizRepository.UpdateQuiz(quiz.ToEntity());
     }
 
