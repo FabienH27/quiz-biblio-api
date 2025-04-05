@@ -12,6 +12,7 @@ public class Question
     public string Details { get; set; } = string.Empty;
 
     [BsonElement("imageId")]
+    [BsonRepresentation(BsonType.ObjectId)]
     public string? ImageId { get; set; }
 
     [BsonElement("correctProposalIds")]
