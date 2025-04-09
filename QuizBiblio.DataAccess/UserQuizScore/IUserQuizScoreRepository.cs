@@ -10,4 +10,6 @@ public interface IUserQuizScoreRepository
     public Task<UserQuizScoreEntity?> GetUserScoreAsync(string userId);
 
     public Task SaveUserScoreAsync(UserQuizScoreEntity userQuizScore);
+
+    public Task SaveUserScoreAsync(string userId, int score);
 }

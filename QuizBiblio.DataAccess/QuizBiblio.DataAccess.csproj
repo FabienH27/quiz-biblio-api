@@ -20,4 +20,8 @@
     <ProjectReference Include="..\QuizBiblio.Models\QuizBiblio.Models.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="QuizPlay\" />
+  </ItemGroup>
+
 </Project>

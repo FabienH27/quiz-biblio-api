@@ -41,4 +41,14 @@ public class UserQuizScoreRepository : IUserQuizScoreRepository
 
         await UserQuizScores.FindOneAndUpdateAsync(filter, update, replaceOptions);
     }
+
+    public async Task SaveUserScoreAsync(string userId, int score)
+    {
+        var filter = Filters.Eq(scoreEntity => scoreEntity.UserId, userId);
+        var replaceOptions = new FindOneAndUpdateOptions<UserQuizScoreEntity> { IsUpsert = true };
+        var update = Builders<UserQuizScoreEntity>.Update
+            .Inc(uqs => uqs.Score, score);
+
+        await UserQuizScores.FindOneAndUpdateAsync(filter, update, replaceOptions);
+    }
 }
