@@ -71,7 +71,7 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
-        var user = await _userService.GetUser(request.Email);
+        var user = await _userService.GetUserFromMail(request.Email);
 
         if (user != null && PasswordHelper.VerifyPassword(request.Password, user?.Password ?? ""))
         {
