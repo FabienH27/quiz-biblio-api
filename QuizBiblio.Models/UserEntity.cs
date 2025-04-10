@@ -6,7 +6,8 @@ namespace QuizBiblio.Models;
 public class UserEntity
 {
     [BsonId]
-    public ObjectId Id { get; set; }
+    [BsonRepresentation(BsonType.ObjectId)]
+    public string Id { get; set; } = ObjectId.GenerateNewId().ToString();
 
     [BsonElement("Email")]
     public required string Email { get; set; }

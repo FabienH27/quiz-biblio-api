@@ -1,6 +1,10 @@
-﻿using MongoDB.Driver;
+﻿using Microsoft.EntityFrameworkCore;
+using MongoDB.Driver;
+using MongoDB.Driver.Linq;
 using QuizBiblio.DataAccess.QbDbContext;
+using QuizBiblio.Models;
 using QuizBiblio.Models.UserQuiz;
+using QuizBiblio.Models.UserQuizScore;
 
 namespace QuizBiblio.DataAccess.UserQuizScore;
 
@@ -9,6 +13,9 @@ public class UserQuizScoreRepository : IUserQuizScoreRepository
     private readonly IMongoDbContext _dbContext;
 
     IMongoCollection<UserQuizScoreEntity> UserQuizScores => _dbContext.GetCollection<UserQuizScoreEntity>("UserQuizScore");
+    IMongoCollection<UserEntity> Users => _dbContext.GetCollection<UserEntity>("Users");
+
+
     private readonly FilterDefinitionBuilder<UserQuizScoreEntity> Filters = Builders<UserQuizScoreEntity>.Filter;
 
     public UserQuizScoreRepository(IMongoDbContext dbContext)
@@ -16,19 +23,20 @@ public class UserQuizScoreRepository : IUserQuizScoreRepository
         _dbContext = dbContext;
     }
 
-    public async Task<IAsyncCursor<UserQuizScoreEntity>> GetUserQuizScores()
+    public async Task<IAsyncCursor<UserScoreWithUserEntity>> GetUserQuizScoresAsync()
     {
-        var sort = Builders<UserQuizScoreEntity>.Sort.Descending("Score");
-        return await UserQuizScores.Find(_ => true)
-            .Limit(10)
-            .Sort(sort)
-            .ToCursorAsync();
-    }
-
-    public async Task<UserQuizScoreEntity?> GetUserScoreAsync(string userId) {
-        var filter = Filters.Eq(scoreEntity => scoreEntity.UserId, userId);
-
-        return await UserQuizScores.Find(filter).FirstOrDefaultAsync();
+        return await (from quizScore in UserQuizScores.AsQueryable()
+                      join user in Users.AsQueryable()
+                      on quizScore.UserId equals user.Id
+                      select new UserScoreWithUserEntity
+                      {
+                          UserId = user.Id,
+                          UserName = user.Username,
+                          Score = quizScore.Score,
+                      })
+                      .OrderByDescending(data => data.Score)
+                      .Take(10)
+                      .ToCursorAsync();
     }
 
     public async Task SaveUserScoreAsync(UserQuizScoreEntity userQuizScore)
@@ -36,8 +44,7 @@ public class UserQuizScoreRepository : IUserQuizScoreRepository
         var filter = Filters.Eq(scoreEntity => scoreEntity.UserId, userQuizScore.UserId);
         var replaceOptions = new FindOneAndUpdateOptions<UserQuizScoreEntity> { IsUpsert = true };
         var update = Builders<UserQuizScoreEntity>.Update
-            .Inc(uqs => uqs.Score, userQuizScore.Score)
-            .SetOnInsert(uqs => uqs.UserName, userQuizScore.UserName);
+            .Inc(uqs => uqs.Score, userQuizScore.Score);
 
         await UserQuizScores.FindOneAndUpdateAsync(filter, update, replaceOptions);
     }

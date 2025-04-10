@@ -1,5 +1,6 @@
 ﻿using QuizBiblio.DataAccess.UserQuizScore;
 using QuizBiblio.Models.UserQuiz;
+using QuizBiblio.Models.UserQuizScore;
 
 namespace QuizBiblio.Services.UserQuizScore;
 
@@ -12,11 +13,11 @@ public class UserQuizScoreService: IUserQuizScoreService
         _scoreRepository = scoreRepository;
     }
 
-    public async Task<List<UserQuizScoreEntity>> GetUserQuizScores()
+    public async Task<List<UserScoreWithUserEntity>> GetUserQuizScores()
     {
-        var scores = new List<UserQuizScoreEntity>();
+        var scores = new List<UserScoreWithUserEntity>();
 
-        using var cursor = await _scoreRepository.GetUserQuizScores();
+        using var cursor = await _scoreRepository.GetUserQuizScoresAsync();
 
         while (await cursor.MoveNextAsync())
         {
@@ -24,8 +25,6 @@ public class UserQuizScoreService: IUserQuizScoreService
         }
         return scores;
     }
-
-    public async Task<UserQuizScoreEntity?> GetUserScoreAsync(string userId) => await _scoreRepository.GetUserScoreAsync(userId);
 
     public async Task SaveUserScoreAsync(UserQuizScoreEntity userQuizScore)
     {
