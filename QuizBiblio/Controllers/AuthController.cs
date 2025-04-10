@@ -22,11 +22,22 @@ public class AuthController : ControllerBase
 
     private readonly string cookieName = "AuthToken";
 
+    private CookieOptions _cookieOptions;
+
     public AuthController(IUserService userService, IOptions<JwtSettings> jwtSettings)
     {
         _userService = userService;
         _jwtSettings = jwtSettings.Value;
         cookieName = _jwtSettings.CookieName;
+
+        _cookieOptions = new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = true,
+            Expires = DateTime.UtcNow.AddMinutes(_jwtSettings.ExpiresInMinutes),
+            SameSite = SameSiteMode.None,
+            Path = "/",
+        };
     }
 
     /// <summary>
@@ -34,7 +45,7 @@ public class AuthController : ControllerBase
     /// </summary>
     /// <param name="request"></param>
     [HttpPost("register")]
-    public void Register([FromBody] RegisterRequest request)
+    public async Task<IActionResult> Register([FromBody] RegisterRequest request)
     {
         var user = new UserEntity
         {
@@ -43,7 +54,13 @@ public class AuthController : ControllerBase
             Email = request.Email,
         };
 
-        _userService.Create(user);
+        var token = GenerateJwtToken(user.Id.ToString(), user.Username, user.Password);
+
+        await _userService.CreateAsync(user);
+
+        Response.Cookies.Append(cookieName, token, _cookieOptions);
+
+        return Ok(new { Message = "Successfully logged in" });
     }
 
     /// <summary>
@@ -54,21 +71,13 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
-        var user = await _userService.GetUser(request.Email);
+        var user = await _userService.GetUserFromMail(request.Email);
 
         if (user != null && PasswordHelper.VerifyPassword(request.Password, user?.Password ?? ""))
         {
             var token = GenerateJwtToken(user?.Id.ToString() ?? "", user?.Username ?? "", user?.Role ?? "");
 
-            var cookieOptions = new CookieOptions
-            {
-                HttpOnly = true,
-                Secure = true,
-                Expires = DateTime.UtcNow.AddMinutes(_jwtSettings.ExpiresInMinutes),
-                SameSite = SameSiteMode.None,
-                Path = "/",
-            };
-            Response.Cookies.Append(cookieName, token, cookieOptions);
+            Response.Cookies.Append(cookieName, token, _cookieOptions);
 
             return Ok(new{ Message = "Successfully logged in" });
         }

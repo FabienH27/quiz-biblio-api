@@ -1,15 +1,23 @@
 ﻿using QuizBiblio.DataAccess.UserQuizScore;
 using QuizBiblio.Models.UserQuiz;
+using QuizBiblio.Models.UserQuizScore;
 
 namespace QuizBiblio.Services.UserQuizScore;
 
-public class UserQuizScoreService(IUserQuizScoreRepository scoreRepository) : IUserQuizScoreService
+public class UserQuizScoreService: IUserQuizScoreService
 {
-    public async Task<List<UserQuizScoreEntity>> GetUserQuizScores()
-    {
-        var scores = new List<UserQuizScoreEntity>();
+    private readonly IUserQuizScoreRepository _scoreRepository;
 
-        using var cursor = await scoreRepository.GetUserQuizScores();
+    public UserQuizScoreService(IUserQuizScoreRepository scoreRepository)
+    {
+        _scoreRepository = scoreRepository;
+    }
+
+    public async Task<List<UserScoreWithUserEntity>> GetUserQuizScores()
+    {
+        var scores = new List<UserScoreWithUserEntity>();
+
+        using var cursor = await _scoreRepository.GetUserQuizScoresAsync();
 
         while (await cursor.MoveNextAsync())
         {
@@ -18,10 +26,14 @@ public class UserQuizScoreService(IUserQuizScoreRepository scoreRepository) : IU
         return scores;
     }
 
-    public async Task<UserQuizScoreEntity?> GetUserScoreAsync(string userId) => await scoreRepository.GetUserScoreAsync(userId);
-
     public async Task SaveUserScoreAsync(UserQuizScoreEntity userQuizScore)
     {
-        await scoreRepository.SaveUserScoreAsync(userQuizScore);
+        await _scoreRepository.SaveUserScoreAsync(userQuizScore);
     }
+
+    public async Task SaveUserScoreAsync(string userId, int score)
+    {
+        await _scoreRepository.SaveUserScoreAsync(userId, score);
+    }
+
 }

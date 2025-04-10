@@ -20,11 +20,11 @@ public class UserRepository : IUserRepository
 
     public async Task<List<UserEntity>> GetUsers() => await Users.Find(_ => true).ToListAsync();
 
-    public async Task<UserEntity?> GetUser(ObjectId id) => await Users.Find(user => user.Id == id).FirstOrDefaultAsync();
+    public async Task<UserEntity?> GetUser(string id) => await Users.Find(user => user.Id == id).FirstOrDefaultAsync();
 
-    public async Task<UserEntity?> GetUser(string email) => await Users.Find(user => user.Email == email).FirstOrDefaultAsync();
+    public async Task<UserEntity?> GetUserFromMail(string email) => await Users.Find(user => user.Email == email).FirstOrDefaultAsync();
 
-    public async Task Create(UserEntity user)
+    public async Task CreateAsync(UserEntity user)
     {
         await Users.InsertOneAsync(user);
     }

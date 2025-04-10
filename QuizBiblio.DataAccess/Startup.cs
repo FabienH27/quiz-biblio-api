@@ -5,6 +5,7 @@ using QuizBiblio.DataAccess.Theme;
 using QuizBiblio.DataAccess.User;
 using QuizBiblio.DataAccess.UserQuizScore;
 using QuizBiblio.DataAccess.ImageStorage;
+using QuizBiblio.DataAccess.Guest;
 
 namespace QuizBiblio.DataAccess;
 public static class Startup
@@ -14,6 +15,8 @@ public static class Startup
         services.AddScoped<IQuizRepository, QuizRepository>();
 
         services.AddScoped<IUserRepository, UserRepository>();
+
+        services.AddScoped<IGuestSessionRepository, GuestSessionRepository>();
 
         services.AddScoped<IThemeRepository, ThemeRepository>();
 

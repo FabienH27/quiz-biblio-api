@@ -12,19 +12,9 @@ namespace QuizBiblio.Controllers;
 [Authorize]
 public class UserQuizScoresController(IUserQuizScoreService userScoreService) : ControllerBase
 {
-    /// <summary>
-    /// Gets score for a user
-    /// </summary>
-    /// <param name="id"></param>
-    /// <returns></returns>
-    [HttpGet("{id:length(24)}")]
-    public async Task<UserQuizScoreEntity?> GetUserScore(string id)
-    {
-        return await userScoreService.GetUserScoreAsync(id);
-    }
 
     [HttpGet()]
-    public async Task<List<UserQuizScoreEntity>> GetScores()
+    public async Task<List<UserScoreWithUserEntity>> GetScores()
     {
         return await userScoreService.GetUserQuizScores();
     }
@@ -40,7 +30,6 @@ public class UserQuizScoresController(IUserQuizScoreService userScoreService) : 
         var userQuizScore = new UserQuizScoreEntity
         {
             UserId = User.Claims.GetUserId(),
-            UserName = User.Claims.GetUserName(),
             Score = userScore.UserScore
         };
 

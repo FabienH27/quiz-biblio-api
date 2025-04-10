@@ -53,7 +53,7 @@ public class UsersController(IUserService userService) : ControllerBase
     [HttpPost]
     public ActionResult<UserEntity> Create(UserEntity user)
     {
-        userService.Create(user);
+        userService.CreateAsync(user);
 
         return user;
     }

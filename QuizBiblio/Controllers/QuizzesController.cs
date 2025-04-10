@@ -22,10 +22,12 @@ public class QuizzesController(IQuizService quizService) : ControllerBase
 
     /// <summary>
     /// Gets quiz by id
+    /// Users does not need to authenticate to play quizzes : they can choose to authenticate after
     /// </summary>
     /// <param name="quizId"></param>
     /// <returns></returns>
     [HttpGet("{quizId}")]
+    [AllowAnonymous]
     public async Task<QuizDto> GetQuiz(string quizId)
     {
         return await quizService.GetByIdAsync(quizId);
