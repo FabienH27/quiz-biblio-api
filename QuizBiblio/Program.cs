@@ -18,6 +18,8 @@ using Hangfire.Mongo.Migration.Strategies.Backup;
 using QuizBiblio.JobScheduler;
 using Hangfire.Dashboard;
 using QuizBiblio.JobScheduler.Authorization;
+using Microsoft.AspNetCore.Builder;
+using QuizBiblio.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -71,7 +73,7 @@ services.AddCors(options =>
     options.AddPolicy(
       name: CORSOpenPolicy,
       builder => {
-          builder.WithOrigins(configuration["FrontUrl"] ?? "").AllowAnyHeader().AllowAnyMethod().AllowCredentials();
+          builder.WithOrigins(configuration["FrontUrl"] ?? "https://quiz-biblio.fabien-hannon.com").AllowAnyHeader().AllowAnyMethod().AllowCredentials();
       });
 });
 
@@ -153,6 +155,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseMiddleware<SecurityHeadersMiddleware>();
+
 app.UseHangfireDashboard("/jobs", new DashboardOptions
 {
     Authorization = [new NoAuthFilter()]
@@ -166,6 +170,11 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+if (app.Environment.IsProduction())
+{
+    app.UseHsts();
+}
 
 JobsInitializer.StartJobs();
 
