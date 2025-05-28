@@ -1,7 +1,9 @@
-﻿namespace QuizBiblio.Models.Quiz;
+﻿namespace QuizBiblio.Models.Quiz.Requests;
 
-public class CreateQuizResponse
+public class UpdateQuizRequest
 {
+    public required string Id { get; set; }
+
     public required string Title { get; set; }
 
     public List<string> Themes { get; set; } = [];

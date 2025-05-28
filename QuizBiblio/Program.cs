@@ -20,6 +20,7 @@ using Hangfire.Dashboard;
 using QuizBiblio.JobScheduler.Authorization;
 using Microsoft.AspNetCore.Builder;
 using QuizBiblio.Middleware;
+using QuizBiblio;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -141,6 +142,8 @@ services.AddSwaggerGen(options =>
         }
     });
 });
+
+//services.AddSingleton<QuizMapper>();
 
 services.AddControllers();
 

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using QuizBiblio.Helper;
 using QuizBiblio.Models.Quiz;
+using QuizBiblio.Models.Quiz.Requests;
 using QuizBiblio.Services.Quiz;
 using QuizBiblio.Services.Utils;
 
@@ -10,7 +11,7 @@ namespace QuizBiblio.Controllers;
 [Authorize]
 [ApiController]
 [Route("api/[controller]")]
-public class QuizzesController(IQuizService quizService) : ControllerBase
+public class QuizzesController(IQuizService quizService, QuizMapper mapper) : ControllerBase
 {
     /// <summary>
     /// Gets all quizzes
@@ -50,7 +51,7 @@ public class QuizzesController(IQuizService quizService) : ControllerBase
     /// </summary>
     /// <param name="quiz"></param>
     [HttpPost]
-    public async Task CreateQuiz(CreateQuizResponse quiz) {
+    public async Task CreateQuiz(CreateQuizRequest request) {
         var userId = User.Claims.GetUserId();
         var userName = User.Claims.GetUserName();
         var user = new QuizCreator
@@ -59,11 +60,13 @@ public class QuizzesController(IQuizService quizService) : ControllerBase
             Name = userName
         };
 
-        await quizService.CreateQuiz(quiz.ToDto(user));
+        var quizDto = mapper.Map(request, user);
+
+        await quizService.CreateQuiz(quizDto);
     }
 
     [HttpPut("{quizId}")]
-    public async Task<IActionResult> UpdateQuiz([FromRoute] string quizId, [FromBody] QuizDto quiz)
+    public async Task<IActionResult> UpdateQuiz([FromRoute] string quizId, [FromBody] UpdateQuizRequest quiz)
     {
         var existingQuiz = await quizService.GetByIdAsync(quizId);
         if(existingQuiz == null)
@@ -71,7 +74,7 @@ public class QuizzesController(IQuizService quizService) : ControllerBase
             return NotFound();
         }
 
-        await quizService.UpdateQuiz(quiz);
+        //await quizService.UpdateQuiz(quiz);
 
         return NoContent();
     }

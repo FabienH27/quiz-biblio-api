@@ -7,6 +7,7 @@ using QuizBiblio.Models.Auth;
 using QuizBiblio.Models.Settings;
 using QuizBiblio.Services.User;
 using QuizBiblio.Services.User.Helper;
+using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;

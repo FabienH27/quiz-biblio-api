@@ -1,8 +1,8 @@
 ﻿using MongoDB.Bson;
 
-namespace QuizBiblio.Models.Quiz;
+namespace QuizBiblio.Models.Quiz.Requests;
 
-public class QuizDto
+public class CreateQuizRequest
 {
     public string Id { get; set; } = ObjectId.GenerateNewId().ToString();
 
@@ -13,6 +13,4 @@ public class QuizDto
     public string? ImageId { get; set; }
 
     public List<Question> Questions { get; set; } = [];
-
-    public QuizCreator Creator { get; set; } = null!;
 }

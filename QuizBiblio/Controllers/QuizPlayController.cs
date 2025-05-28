@@ -4,7 +4,6 @@ using QuizBiblio.Helper;
 using QuizBiblio.Models.UserQuizScore;
 using QuizBiblio.Services.Guest;
 using QuizBiblio.Services.UserQuizScore;
-using QuizBiblio.Services.Utils;
 
 namespace QuizBiblio.Controllers;
 

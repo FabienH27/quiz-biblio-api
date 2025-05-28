@@ -1,5 +1,4 @@
-﻿using QuizBiblio.Models.Guest;
-using QuizBiblio.Models.UserQuizScore;
+﻿using QuizBiblio.Models.UserQuizScore;
 
 namespace QuizBiblio.Services.Guest;
 
