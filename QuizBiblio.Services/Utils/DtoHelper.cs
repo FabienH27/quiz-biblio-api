@@ -1,5 +1,5 @@
-﻿using QuizBiblio.Models;
-using QuizBiblio.Models.Quiz;
+﻿using QuizBiblio.Models.Quiz;
+using QuizBiblio.Models.Quiz.Requests;
 
 namespace QuizBiblio.Services.Utils;
 
@@ -29,7 +29,7 @@ public static class DtoHelper
     /// <param name="quiz">quiz from the front-end</param>
     /// <param name="user">quiz creator</param>
     /// <returns></returns>
-    public static QuizDto ToDto(this CreateQuizResponse quiz, QuizCreator user)
+    public static QuizDto ToDto(this CreateQuizRequest quiz, QuizCreator user)
     {
         return new QuizDto
         {

@@ -138,6 +138,7 @@ services.AddSwaggerGen(options =>
     });
 });
 
+services.AddSingleton<QuizMapper>();
 services.AddAutoMapper(cfg => cfg.AddProfile<AutoMapperProfile>());
 
 services.AddControllers();

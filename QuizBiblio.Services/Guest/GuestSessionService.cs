@@ -2,7 +2,6 @@
 using QuizBiblio.Models.Guest;
 using QuizBiblio.Models.UserQuizScore;
 using QuizBiblio.Services.UserQuizScore;
-using QuizBiblio.Services.Utils;
 
 namespace QuizBiblio.Services.Guest;
 
