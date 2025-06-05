@@ -3,7 +3,6 @@ using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using QuizBiblio.DataAccess.QbDbContext;
 using QuizBiblio.Models;
-using QuizBiblio.Models.UserQuiz;
 using QuizBiblio.Models.UserQuizScore;
 
 namespace QuizBiblio.DataAccess.UserQuizScore;
@@ -39,23 +38,32 @@ public class UserQuizScoreRepository : IUserQuizScoreRepository
                       .ToCursorAsync();
     }
 
-    public async Task SaveUserScoreAsync(UserQuizScoreEntity userQuizScore)
+    public async Task<GuestScoreResponse> SaveUserScoreAsync(UserQuizScoreEntity userQuizScore)
     {
         var filter = Filters.Eq(scoreEntity => scoreEntity.UserId, userQuizScore.UserId);
         var replaceOptions = new FindOneAndUpdateOptions<UserQuizScoreEntity> { IsUpsert = true };
         var update = Builders<UserQuizScoreEntity>.Update
             .Inc(uqs => uqs.Score, userQuizScore.Score);
 
-        await UserQuizScores.FindOneAndUpdateAsync(filter, update, replaceOptions);
+        var result = await UserQuizScores.FindOneAndUpdateAsync(filter, update, replaceOptions);
+
+        return new GuestScoreResponse(result.Score, userQuizScore.Score);
     }
 
-    public async Task SaveUserScoreAsync(string userId, int score)
+    public async Task<GuestScoreResponse> SaveUserScoreAsync(string userId, int score)
     {
         var filter = Filters.Eq(scoreEntity => scoreEntity.UserId, userId);
         var replaceOptions = new FindOneAndUpdateOptions<UserQuizScoreEntity> { IsUpsert = true };
         var update = Builders<UserQuizScoreEntity>.Update
             .Inc(uqs => uqs.Score, score);
 
-        await UserQuizScores.FindOneAndUpdateAsync(filter, update, replaceOptions);
+        var result = await UserQuizScores.FindOneAndUpdateAsync(filter, update, replaceOptions);
+
+        //FindOneAndUpdateAsync() returns the previous value somehow
+        var previousScore = result?.Score;
+        
+        var userNewScore = previousScore.HasValue ? previousScore.Value + score : score;
+
+        return new GuestScoreResponse(userNewScore, score);
     }
 }

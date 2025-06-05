@@ -23,15 +23,11 @@ public class GuestSessionService : IGuestSessionService
         return await _guestSessionRepository.StartGuestSessionAsync(userName);
     }
 
-    public async Task<IEnumerable<AnswerDto>> MergeToUserAsync(string guestId, string userId)
+    public async Task<GuestScoreResponse> MergeToUserAsync(string guestId, string userId)
     {
         var guestSession = await GetGuestSessionAsync(guestId);
 
-        var guestScore = ScoreHelper.CalculateUserScore(guestSession.Answers?.Answers ?? []);
-
-        await _userQuizScoreService.SaveUserScoreAsync(userId, guestScore);
-
-        return guestSession.Answers?.Answers ?? [];
+        return await _userQuizScoreService.SaveUserScoreAsync(userId, guestSession.Score);
     }
 
     public async Task<bool> DeleteGuestSessionAsync(string guestId)
@@ -39,9 +35,16 @@ public class GuestSessionService : IGuestSessionService
         return await _guestSessionRepository.DeleteGuestSessionAsync(guestId);
     }
 
-    public async Task<bool> SaveUserAnswersAsync(string guestId, QuizAnswerDto answerDto)
+    public async Task<bool> SaveUserAnswersAsync(string guestId, int score)
     {
-        return await _guestSessionRepository.SaveUserAnswersAsync(guestId, answerDto);
+        return await _guestSessionRepository.SaveGuestScoreAsync(guestId, score);
+    }
+
+    public async Task<bool> SaveUserAnswersAsync(string guestId, IEnumerable<AnswerDto> answers)
+    {
+        var score = ScoreHelper.CalculateUserScore(answers);
+
+        return await _guestSessionRepository.SaveGuestScoreAsync(guestId, score);
     }
 
     public async Task<GuestSession> GetGuestSessionAsync(string guestId)

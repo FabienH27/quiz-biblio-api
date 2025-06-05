@@ -1,5 +1,4 @@
 ﻿using QuizBiblio.Models.Guest;
-using QuizBiblio.Models.UserQuizScore;
 
 namespace QuizBiblio.DataAccess.Guest;
 
@@ -9,7 +8,7 @@ public interface IGuestSessionRepository
 
     public Task<bool> DeleteGuestSessionAsync(string guestId);
 
-    public Task<bool> SaveUserAnswersAsync(string guestId, QuizAnswerDto answerDtos);
+    public Task<bool> SaveGuestScoreAsync(string guestId, int score);
 
     public Task<GuestSession> GetGuestSessionAsync(string guestId);
 }

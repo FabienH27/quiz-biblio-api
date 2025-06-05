@@ -12,14 +12,10 @@ using QuizBiblio.Models.DatabaseSettings;
 using QuizBiblio.Models.Settings;
 using QuizBiblio.Helper;
 using Hangfire;
-using Hangfire.Mongo;
-using Hangfire.Mongo.Migration.Strategies;
-using Hangfire.Mongo.Migration.Strategies.Backup;
 using QuizBiblio.JobScheduler;
-using Hangfire.Dashboard;
 using QuizBiblio.JobScheduler.Authorization;
-using Microsoft.AspNetCore.Builder;
 using QuizBiblio.Middleware;
+using QuizBiblio;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -141,6 +137,8 @@ services.AddSwaggerGen(options =>
         }
     });
 });
+
+services.AddAutoMapper(cfg => cfg.AddProfile<AutoMapperProfile>());
 
 services.AddControllers();
 

@@ -1,6 +1,6 @@
 ﻿using QuizBiblio.DataAccess.UserQuizScore;
-using QuizBiblio.Models.UserQuiz;
 using QuizBiblio.Models.UserQuizScore;
+using QuizBiblio.Services.Utils;
 
 namespace QuizBiblio.Services.UserQuizScore;
 
@@ -26,14 +26,28 @@ public class UserQuizScoreService: IUserQuizScoreService
         return scores;
     }
 
-    public async Task SaveUserScoreAsync(UserQuizScoreEntity userQuizScore)
+    /// <summary>
+    /// Saves score for a given user based on correct answers count
+    /// </summary>
+    /// <param name="userId">id of the user to update</param>
+    /// <param name="answers">user answers</param>
+    /// <returns></returns>
+    public async Task<GuestScoreResponse> SaveUserScoreAsync(string userId, IEnumerable<AnswerDto> answers)
     {
-        await _scoreRepository.SaveUserScoreAsync(userQuizScore);
+        var guestScore = ScoreHelper.CalculateUserScore(answers);
+
+        return await _scoreRepository.SaveUserScoreAsync(userId, guestScore);
     }
 
-    public async Task SaveUserScoreAsync(string userId, int score)
+    /// <summary>
+    /// Saves new score to existing user score
+    /// </summary>
+    /// <param name="userId">id of the user</param>
+    /// <param name="newScore">new score to combine</param>
+    /// <returns></returns>
+    public async Task<GuestScoreResponse> SaveUserScoreAsync(string userId, int newScore)
     {
-        await _scoreRepository.SaveUserScoreAsync(userId, score);
+        return await _scoreRepository.SaveUserScoreAsync(userId, newScore);
     }
 
 }

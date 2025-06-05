@@ -1,7 +1,7 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace QuizBiblio.Models.UserQuiz;
+namespace QuizBiblio.Models.UserQuizScore;
 
 public class UserQuizScoreEntity
 {

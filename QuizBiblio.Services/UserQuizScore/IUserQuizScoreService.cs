@@ -1,5 +1,4 @@
-﻿using QuizBiblio.Models.UserQuiz;
-using QuizBiblio.Models.UserQuizScore;
+﻿using QuizBiblio.Models.UserQuizScore;
 
 namespace QuizBiblio.Services.UserQuizScore;
 
@@ -7,7 +6,7 @@ public interface IUserQuizScoreService
 {
     public Task<List<UserScoreWithUserEntity>> GetUserQuizScores();
 
-    public Task SaveUserScoreAsync(UserQuizScoreEntity userQuizScore);
+    public Task<GuestScoreResponse> SaveUserScoreAsync(string userId, IEnumerable<AnswerDto> answers);
 
-    public Task SaveUserScoreAsync(string userId, int score);
+    public Task<GuestScoreResponse> SaveUserScoreAsync(string userId, int newScore);
 }
