@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using QuizBiblio.Helper;
 using QuizBiblio.Models.UserQuizScore;
 using QuizBiblio.Services.Guest;
 using QuizBiblio.Services.UserQuizScore;
-using QuizBiblio.Services.Utils;
 
 namespace QuizBiblio.Controllers;
 
@@ -14,32 +14,24 @@ public class QuizPlayController : ControllerBase
 {
     private readonly IGuestSessionService _guestSessionService;
     private readonly IUserQuizScoreService _userQuizScoreService;
+    private readonly IMapper _mapper;
 
-    public QuizPlayController(IGuestSessionService guestSessionService, IUserQuizScoreService userQuizScoreService)
+    public QuizPlayController(IGuestSessionService guestSessionService, IUserQuizScoreService userQuizScoreService, IMapper mapper)
     {
         _guestSessionService = guestSessionService;
         _userQuizScoreService = userQuizScoreService;
+        _mapper = mapper;
     }
 
     [HttpPost("submit-answers")]
-    public async Task<IActionResult> SubmitAnswers([FromBody] QuizAnswersRequest answersRequest)
+    public async Task<ActionResult<GuestScoreResponse>> SubmitAnswers([FromBody] QuizAnswersRequest answersRequest)
     {
-        var quizAnswers = new QuizAnswerDto
-        {
-            QuizId = answersRequest.QuizId,
-            Answers = answersRequest.Answers.Select(x => new AnswerDto
-            {
-                QuestionId = x.QuestionId,
-                Answers = x.Answers,
-                IsCorrect = x.IsCorrect,
-            })
-        };
+        var quizAnswers = _mapper.Map<QuizAnswerDto>(answersRequest);
 
         if (User.Identity?.IsAuthenticated == true)
         {
-            var userScore = ScoreHelper.CalculateUserScore(quizAnswers.Answers);
-
-            await _userQuizScoreService.SaveUserScoreAsync(User.Claims.GetUserId(), userScore);
+            var result = await _userQuizScoreService.SaveUserScoreAsync(User.Claims.GetUserId(), quizAnswers.Answers);
+            return Ok(result);
         }
         else
         {
@@ -47,27 +39,23 @@ public class QuizPlayController : ControllerBase
 
             if (guestId != null)
             {
-                await _guestSessionService.SaveUserAnswersAsync(guestId, quizAnswers);
-            }
-            else
-            {
-                return BadRequest();
+                await _guestSessionService.SaveUserAnswersAsync(guestId, quizAnswers.Answers);
             }
         }
-
-        return Ok();
+        return BadRequest();
     }
 
     [HttpPost("merge-guest")]
     [Authorize]
-    public async Task<IActionResult> MergeToUser()
+    public async Task<ActionResult<GuestScoreResponse>> MergeToUser()
     {
         var guestId = Request.Cookies["guestId"];
         var userId = User.Claims.GetUserId();
 
         if (guestId != null)
         {
-            return Ok(await _guestSessionService.MergeToUserAsync(guestId, userId));
+            var result = await _guestSessionService.MergeToUserAsync(guestId, userId);
+            return Ok(result);
         }
         else
         {

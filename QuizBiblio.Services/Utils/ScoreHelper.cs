@@ -1,5 +1,4 @@
-﻿using QuizBiblio.Models.Guest;
-using QuizBiblio.Models.UserQuizScore;
+﻿using QuizBiblio.Models.UserQuizScore;
 
 namespace QuizBiblio.Services.Utils;
 
@@ -10,8 +9,5 @@ public static class ScoreHelper
     /// </summary>
     /// <param name="answers">answers gave by the user</param>
     /// <returns>computed new score</returns>
-    public static int CalculateUserScore(IEnumerable<AnswerDto> answers)
-    {
-        return answers.Where(x => x.IsCorrect).Count();
-    }
+    public static int CalculateUserScore(IEnumerable<AnswerDto> answers) => answers.Where(x => x.IsCorrect).Count();
 }

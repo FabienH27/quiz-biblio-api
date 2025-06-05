@@ -34,12 +34,12 @@ public class GuestSessionRepository : IGuestSessionRepository
         return deleteRequest.IsAcknowledged;
     }
 
-    public async Task<bool> SaveUserAnswersAsync(string guestId, QuizAnswerDto answerDto)
+    public async Task<bool> SaveGuestScoreAsync(string guestId, int userScore)
     {
         var filter = Builders<GuestSession>.Filter.Eq(s => s.Id, guestId);
 
         var update = Builders<GuestSession>.Update
-            .Set(s => s.Answers, answerDto);
+            .Set(s => s.Score, userScore);
 
         var updateRequest = await GuestSession.UpdateOneAsync(filter, update);
 

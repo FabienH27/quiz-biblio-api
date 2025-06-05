@@ -4,7 +4,7 @@ using QuizBiblio.Models.UserQuizScore;
 
 namespace QuizBiblio.Models.Guest;
 
-public class GuestSession
+public class GuestSession(string userName)
 {
     [BsonId]
     [BsonRepresentation(BsonType.ObjectId)]
@@ -12,12 +12,7 @@ public class GuestSession
 
     public DateTime CreatedAt { get; set; } = DateTime.Now;
 
-    public string? UserName { get; set; }
+    public string? UserName { get; set; } = userName;
 
-    public QuizAnswerDto? Answers { get; set; }
- 
-    public GuestSession(string userName)
-    {
-        UserName = userName;
-    }
+    public int Score { get; set; }
 }
