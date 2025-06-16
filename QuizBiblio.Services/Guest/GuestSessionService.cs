@@ -35,12 +35,7 @@ public class GuestSessionService : IGuestSessionService
         return await _guestSessionRepository.DeleteGuestSessionAsync(guestId);
     }
 
-    public async Task<bool> SaveUserAnswersAsync(string guestId, int score)
-    {
-        return await _guestSessionRepository.SaveGuestScoreAsync(guestId, score);
-    }
-
-    public async Task<bool> SaveUserAnswersAsync(string guestId, IEnumerable<AnswerDto> answers)
+    public async Task<bool> SaveGuestAnswersAsync(string guestId, IEnumerable<AnswerDto> answers)
     {
         var score = ScoreHelper.CalculateUserScore(answers);
 

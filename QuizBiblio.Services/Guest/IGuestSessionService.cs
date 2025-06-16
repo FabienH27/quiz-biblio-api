@@ -10,5 +10,5 @@ public interface IGuestSessionService
 
     public Task<bool> DeleteGuestSessionAsync(string guestId);
 
-    public Task<bool> SaveUserAnswersAsync(string guestId, IEnumerable<AnswerDto> answers);
+    public Task<bool> SaveGuestAnswersAsync(string guestId, IEnumerable<AnswerDto> answers);
 }
