@@ -22,7 +22,7 @@ public class AuthController : ControllerBase
 
     private readonly string cookieName = "AuthToken";
 
-    private CookieOptions _cookieOptions;
+    private readonly CookieOptions _cookieOptions;
 
     public AuthController(IUserService userService, IOptions<JwtSettings> jwtSettings)
     {
