@@ -6,33 +6,27 @@ using QuizBiblio.Services.Exceptions;
 
 namespace QuizBiblio.Services.ImageStorage;
 
-public class ImageStorageService : IImageStorageService
+public class ImageStorageService(IImageStorageRepository imageStorageRepository) : IImageStorageService
 {
-
-    private readonly IImageStorageRepository _imageStorageRepository;
-
-    public ImageStorageService(IImageStorageRepository imageStorageRepository)
-    {
-        _imageStorageRepository = imageStorageRepository;
-    }
+    private readonly IImageStorageRepository _imageStorageRepository = imageStorageRepository;
 
     /// <summary>
     /// Uploads an image to temporary folder
     /// </summary>
     /// <param name="file">fiile data to upload</param>
     /// <returns>image id and url</returns>
-    /// <exception cref="ImageUploadExcention">exception thrown in case of invalid data</exception>
+    /// <exception cref="ImageUploadException">exception thrown in case of invalid data</exception>
     public async Task<UploadResult> UploadImageAsync(IFormFile file)
     {
         if (file == null || file.Length == 0)
         {
-            throw new ImageUploadExcention("No file uploaded.");
+            throw new ImageUploadException("No file uploaded.");
         }
 
         var provider = new FileExtensionContentTypeProvider();
         if (!provider.TryGetContentType(file.FileName, out var contentType))
         {
-            throw new ImageUploadExcention("Could not determine file type.");
+            throw new ImageUploadException("Could not determine file type.");
         }
 
         var allowedExtensions = new HashSet<string> { ".png", ".jpg", ".jpeg", ".webp" };
@@ -40,12 +34,12 @@ public class ImageStorageService : IImageStorageService
 
         if (!allowedExtensions.Contains(fileExtension) || !contentType.StartsWith("image/"))
         {
-            throw new ImageUploadExcention("Invalid file type. Only images are allowed.");
+            throw new ImageUploadException("Invalid file type. Only images are allowed.");
         }
 
         if (file.Length > 5 * 1024 * 1024)
         {
-            throw new ImageUploadExcention("File exceeds the 5MB limit.");
+            throw new ImageUploadException("File exceeds the 5MB limit.");
         }
 
         return await _imageStorageRepository.UploadImageAsync(file, contentType);

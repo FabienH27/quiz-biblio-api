@@ -12,13 +12,11 @@ public class QuizService : IQuizService
 {
     private readonly IQuizRepository _quizRepository;
     private readonly IImageStorageService _imageStorageService;
-    private readonly BucketSettings _bucketSettings;
 
-    public QuizService(IQuizRepository quizRepository, IImageStorageService imageStorageService, IOptions<BucketSettings> bucketSettings)
+    public QuizService(IQuizRepository quizRepository, IImageStorageService imageStorageService)
     {
         _quizRepository = quizRepository;
         _imageStorageService = imageStorageService;
-        _bucketSettings = bucketSettings.Value;
     }
 
     /// <summary>
@@ -70,12 +68,13 @@ public class QuizService : IQuizService
             await SaveImageToAssets(quiz.ImageId);
         }
 
-        var questionImages = quiz.Questions.Select(x => x.ImageId).OfType<string>().ToList();
+        var questionImages = quiz.Questions
+            .Select(x => x.ImageId)
+            .Where(id => !string.IsNullOrWhiteSpace(id))
+            .Select(id => id!);
 
-        foreach (var questionImage in questionImages)
-        {
-            await SaveImageToAssets(questionImage);
-        }
+        var tasks = questionImages.Select(SaveImageToAssets);
+        await Task.WhenAll(tasks);
 
         await _quizRepository.UpdateQuiz(quiz.ToEntity());
     }

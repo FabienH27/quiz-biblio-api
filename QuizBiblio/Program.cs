@@ -10,12 +10,12 @@ using QuizBiblio.DataAccess.QbDbContext;
 using Google.Cloud.Storage.V1;
 using QuizBiblio.Models.DatabaseSettings;
 using QuizBiblio.Models.Settings;
-using QuizBiblio.Helper;
 using Hangfire;
 using QuizBiblio.JobScheduler;
 using QuizBiblio.JobScheduler.Authorization;
 using QuizBiblio.Middleware;
 using QuizBiblio;
+using QuizBiblio.CloudStorage;
 
 var builder = WebApplication.CreateBuilder(args);
 
