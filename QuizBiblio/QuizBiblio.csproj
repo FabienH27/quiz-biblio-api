@@ -28,4 +28,8 @@
     <ProjectReference Include="..\QuizBiblio.Services\QuizBiblio.Services.csproj" />
   </ItemGroup>
 
+	<ItemGroup>
+		<InternalsVisibleTo Include="QuizBiblio.IntegrationTests"/>
+	</ItemGroup>
+
 </Project>

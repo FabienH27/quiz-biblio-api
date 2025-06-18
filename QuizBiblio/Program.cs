@@ -43,6 +43,7 @@ if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development
 
 var settings = MongoClientSettings.FromConnectionString(connectionString);
 settings.SslSettings = new SslSettings() { EnabledSslProtocols = System.Security.Authentication.SslProtocols.Tls12 };
+
 services.AddSingleton<IMongoClient>(new MongoClient(settings));
 
 services.AddSingleton<IMongoDbContext, MongoDbContext>();
