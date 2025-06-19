@@ -10,7 +10,6 @@ using QuizBiblio.Services.UserQuizScore;
 namespace QuizBiblio.Services;
 public static class Startup
 {
-
     public static IServiceCollection AddServices(this IServiceCollection services)
     {
         services.AddRepositories();

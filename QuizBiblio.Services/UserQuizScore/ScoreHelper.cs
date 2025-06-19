@@ -1,6 +1,6 @@
 ﻿using QuizBiblio.Models.UserQuizScore;
 
-namespace QuizBiblio.Services.Utils;
+namespace QuizBiblio.Services.UserQuizScore;
 
 public static class ScoreHelper
 {

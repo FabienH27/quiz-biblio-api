@@ -55,7 +55,7 @@ public class QuizService : IQuizService
             await SaveImageToAssets(quiz.ImageId);
         }
 
-        await _quizRepository.CreateQuiz(quiz.ToEntity());
+        //await _quizRepository.CreateQuiz(quiz.ToEntity());
     }
 
     /// <summary>
@@ -77,7 +77,7 @@ public class QuizService : IQuizService
             await SaveImageToAssets(questionImage);
         }
 
-        await _quizRepository.UpdateQuiz(quiz.ToEntity());
+        //await _quizRepository.UpdateQuiz(quiz.ToEntity());
     }
 
     /// <summary>
