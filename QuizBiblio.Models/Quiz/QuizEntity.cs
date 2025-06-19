@@ -20,7 +20,7 @@ public class QuizEntity
     public string? ImageId { get; set; }
 
     [BsonElement("questions")]
-    public List<Question> Questions { get; set; } = [];
+    public IEnumerable<Question> Questions { get; set; } = [];
 
     [BsonElement("creator")]
     public required QuizCreator Creator { get; set; }

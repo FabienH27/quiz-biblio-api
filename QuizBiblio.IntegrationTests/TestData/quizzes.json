@@ -1,0 +1,37 @@
+[
+  {
+    "id": "67dd6f4e9a458024c706abc8",
+    "title": "Quiz Test",
+    "themes": [
+      "Tests",
+      "Integration Tests"
+    ],
+    "questions": [
+      {
+        "text": "Question A",
+        "details": "Description A",
+        "correctProposalIds": [
+          0
+        ],
+        "proposals": [
+          {
+            "text": "Proposal A"
+          },
+          {
+            "text": "Proposal B"
+          },
+          {
+            "text": "Proposal C"
+          },
+          {
+            "text": "Proposal D"
+          }
+        ]
+      }
+    ],
+    "creator": {
+      "id": "67dd4811d01ac7caa036ffe2",
+      "name": "FabienH"
+    }
+  }
+]

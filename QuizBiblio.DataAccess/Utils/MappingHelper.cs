@@ -43,7 +43,7 @@ public static class MappingHelper
             CreatorName = q.Creator.Name,
             ImageId = q.ImageId,
             Themes = q.Themes,
-            QuestionCount = q.Questions.Count
+            QuestionCount = q.Questions.Count()
         });
     }
 }
