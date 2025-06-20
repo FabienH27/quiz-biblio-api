@@ -1,14 +1,30 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.Extensions.Options;
 using QuizBiblio.DataAccess.ImageStorage;
+using QuizBiblio.DataAccess.Utils;
 using QuizBiblio.Models.Image;
+using QuizBiblio.Models.Settings;
+using QuizBiblio.Services.CloudStorage;
 using QuizBiblio.Services.Exceptions;
 
 namespace QuizBiblio.Services.ImageStorage;
 
-public class ImageStorageService(IImageStorageRepository imageStorageRepository) : IImageStorageService
+public class ImageStorageService : IImageStorageService
 {
-    private readonly IImageStorageRepository _imageStorageRepository = imageStorageRepository;
+    private readonly IImageStorageRepository _imageStorageRepository;
+
+    private readonly ICloudStorageService _cloudStorageService;
+    
+    private readonly BucketSettings _bucketSettings;
+
+    public ImageStorageService(IImageStorageRepository imageStorageRepository, ICloudStorageService cloudStorageService, IOptions<BucketSettings> bucketSettings)
+    {
+        _imageStorageRepository = imageStorageRepository;
+        _cloudStorageService = cloudStorageService;
+        
+        _bucketSettings = bucketSettings.Value;
+    }
 
     /// <summary>
     /// Uploads an image to temporary folder
@@ -42,7 +58,14 @@ public class ImageStorageService(IImageStorageRepository imageStorageRepository)
             throw new ImageUploadException("File exceeds the 5MB limit.");
         }
 
-        return await _imageStorageRepository.UploadImageAsync(file, contentType);
+        using var stream = file.OpenReadStream();
+
+        var uniqueFileName = Guid.NewGuid();
+        var fileName = $"{uniqueFileName}{fileExtension}";
+
+        var storageLocation = await _cloudStorageService.SaveFileAsync(stream, fileName, contentType);
+
+        return await _imageStorageRepository.SaveImageAsync(storageLocation);
     }
 
     /// <summary>
@@ -52,7 +75,16 @@ public class ImageStorageService(IImageStorageRepository imageStorageRepository)
     /// <returns></returns>
     public async Task MoveImageToAssetsAsync(string imageId)
     {
-        await _imageStorageRepository.MoveImageToAssets(imageId);
+        var image = await _imageStorageRepository.GetImageAsync(imageId);
+
+        var imagePath = await _cloudStorageService.MoveImageToAssetsAsync(image);
+
+        string resizedImageUrl = ImageHelper.GetResizedUrl(imagePath, _bucketSettings.ResizedImageWidth);
+
+        image.ResizedUrl = resizedImageUrl;
+        image.OriginalUrl = imagePath;
+
+        await _imageStorageRepository.MoveImageToAssetsAsync(image);
     }
 
     /// <summary>
@@ -75,9 +107,8 @@ public class ImageStorageService(IImageStorageRepository imageStorageRepository)
     /// <summary>
     /// Deletes temporary images
     /// </summary>
-    /// <returns>whether images were successfully deleted</returns>
-    public async Task<bool> DeleteTemporaryImages()
+    public async Task DeleteTemporaryImages()
     {
-        return await _imageStorageRepository.DeleteTemporaryImages();
+        await _imageStorageRepository.DeleteTemporaryImages();
     }
 }

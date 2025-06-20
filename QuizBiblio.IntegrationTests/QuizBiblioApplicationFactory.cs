@@ -1,12 +1,11 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using MongoDB.Driver;
 using QuizBiblio.DataAccess.QbDbContext;
+using QuizBiblio.Services.CloudStorage;
 
 namespace QuizBiblio.IntegrationTests;
 
@@ -17,10 +16,11 @@ internal class QuizBiblioApplicationFactory(string connectionString, string data
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        builder.UseEnvironment("Test");
-
+        builder.UseEnvironment("Testing");
+        
         builder.ConfigureAppConfiguration((_, configBuilder) =>
         {
+
             configBuilder.AddInMemoryCollection(new Dictionary<string, string?>
             {
                 ["QuizStoreDatabaseSettings:ConnectionString"] = _connectionString,
@@ -32,6 +32,7 @@ internal class QuizBiblioApplicationFactory(string connectionString, string data
         {
             services.RemoveAll<IMongoClient>();
             services.RemoveAll<IMongoDbContext>();
+            services.RemoveAll<IStorageClientWrapper>();
 
             var mongoClientSettings = MongoClientSettings.FromConnectionString(_connectionString);
             mongoClientSettings.SslSettings = new SslSettings
@@ -40,6 +41,8 @@ internal class QuizBiblioApplicationFactory(string connectionString, string data
             };
 
             var client = new MongoClient(mongoClientSettings);
+
+            services.AddSingleton<IStorageClientWrapper, FakeStorageClientWrapper>();
 
             services.AddSingleton<IMongoClient>(client);
             

@@ -30,6 +30,5 @@ public interface IImageStorageService
     /// <summary>
     /// Deletes temporary images
     /// </summary>
-    /// <returns>whether images were successfully deleted</returns>
-    public Task<bool> DeleteTemporaryImages();
+    public Task DeleteTemporaryImages();
 }

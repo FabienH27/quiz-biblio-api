@@ -1,26 +1,17 @@
 ﻿using FluentAssertions;
-using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Bson;
 using QuizBiblio.DataAccess.QbDbContext;
-using QuizBiblio.Models;
 using QuizBiblio.Models.Quiz;
 using QuizBiblio.IntegrationTests.JsonParser;
 
 namespace QuizBiblio.IntegrationTests.Quizzes;
 
-public class GetQuizByIdTests : IClassFixture<QuizApiTests>
+public class GetQuizByIdTests(QuizApiTests setup) : IClassFixture<QuizApiTests>
 {
-    private readonly IMongoDbContext _dbContext;
-    private readonly HttpClient _client;
+    private readonly IMongoDbContext _dbContext = setup._dbContext;
+    private readonly HttpClient _client = setup.Factory.CreateClient();
 
-
-
-    public GetQuizByIdTests(QuizApiTests setup)
-    {
-        _client = setup.Factory.CreateClient();
-
-        _dbContext = setup._dbContext;
-    }
+    //TODO: Logout of gcloud locally and try running test again
 
     [Fact]
     public async Task ShouldReturnQuizById()

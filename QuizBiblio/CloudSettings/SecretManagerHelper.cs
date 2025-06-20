@@ -1,6 +1,6 @@
 ﻿using Google.Cloud.SecretManager.V1;
 
-namespace QuizBiblio.CloudStorage;
+namespace QuizBiblio.CloudSettings;
 
 public class SecretManagerHelper
 {

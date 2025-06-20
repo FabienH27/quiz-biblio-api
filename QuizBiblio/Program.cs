@@ -7,7 +7,6 @@ using QuizBiblio.Models.Rbac;
 using System.IdentityModel.Tokens.Jwt;
 using MongoDB.Driver;
 using QuizBiblio.DataAccess.QbDbContext;
-using Google.Cloud.Storage.V1;
 using QuizBiblio.Models.DatabaseSettings;
 using QuizBiblio.Models.Settings;
 using Hangfire;
@@ -15,7 +14,8 @@ using QuizBiblio.JobScheduler;
 using QuizBiblio.JobScheduler.Authorization;
 using QuizBiblio.Middleware;
 using QuizBiblio;
-using QuizBiblio.CloudStorage;
+using QuizBiblio.Services.CloudStorage;
+using QuizBiblio.CloudSettings;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,7 +31,7 @@ string? dbName = configuration.GetValue<string>("QuizStoreDatabase:DatabaseName"
 var bucketSettings = configuration.GetSection("BucketSettings");
 services.Configure<BucketSettings>(bucketSettings);
 
-services.AddSingleton(await StorageClient.CreateAsync());
+services.AddSingleton<IStorageClientWrapper, StorageClientWrapper>();
 
 // MongoDB Settings
 var connectionString = SecretManagerHelper.GetConnectionStringFromSecretManager("quiz-database-connection");
@@ -109,7 +109,6 @@ services.AddAuthentication(options =>
         }
     };
 });
-
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 services.AddEndpointsApiExplorer();

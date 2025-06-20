@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 using Moq;
 using QuizBiblio.DataAccess.ImageStorage;
+using QuizBiblio.Models.Settings;
+using QuizBiblio.Services.CloudStorage;
 using QuizBiblio.Services.Exceptions;
 using QuizBiblio.Services.ImageStorage;
 
@@ -10,10 +13,14 @@ public class ImageUploadTests
 {
 
     private readonly Mock<IImageStorageRepository> _imageStorageRepositoryMock;
+    private readonly Mock<ICloudStorageService> _cloudStorageServiceMock;
+
+    IOptions<BucketSettings> _bucketSettings = Options.Create<BucketSettings>(new BucketSettings() { Name = "test", QuizImageAssetsLocation = "assets/", ResizedImageWidth = 800, TemporaryImageLocation = "temp/" });
 
     public ImageUploadTests()
     {
         _imageStorageRepositoryMock = new Mock<IImageStorageRepository>();
+        _cloudStorageServiceMock = new Mock<ICloudStorageService>();
     }
 
     public static TheoryData<string, string> InvalidFileData => new()
@@ -29,7 +36,7 @@ public class ImageUploadTests
     [MemberData(nameof(InvalidFileData))]
     public async Task ShouldThrowExceptionWithEmptyFile(string content, string extension)
     {
-        var service = new ImageStorageService(_imageStorageRepositoryMock.Object);
+        var service = new ImageStorageService(_imageStorageRepositoryMock.Object, _cloudStorageServiceMock.Object, _bucketSettings);
 
         var file = CreateFile(content, extension);
 
@@ -40,19 +47,18 @@ public class ImageUploadTests
     [Fact]
     public async Task ShouldSaveFileWhenValid()
     {
-        var service = new ImageStorageService(_imageStorageRepositoryMock.Object);
-        
+        var service = new ImageStorageService(_imageStorageRepositoryMock.Object, _cloudStorageServiceMock.Object, _bucketSettings);
+
         var file = CreateFile("abcd", "jpg");
 
         await service.UploadImageAsync(file);
 
-        _imageStorageRepositoryMock.Verify(x => x.UploadImageAsync(It.IsAny<IFormFile>(), It.Is<string>(x => x.StartsWith("image/"))), Times.Once);
+        _imageStorageRepositoryMock.Verify(x => x.SaveImageAsync(It.Is<string>(x => x.StartsWith("quiz-images/"))), Times.Once);
 
         _imageStorageRepositoryMock.VerifyNoOtherCalls();
-
     }
 
-    private static FormFile CreateFile(string content, string extension)
+    private FormFile CreateFile(string content, string extension)
     {
         var fileName = $"testfile.{extension}";
         var stream = new MemoryStream();
@@ -61,6 +67,8 @@ public class ImageUploadTests
         writer.Write(content);
         writer.Flush();
         stream.Position = 0;
+
+        _cloudStorageServiceMock.Setup(x => x.SaveFileAsync(It.IsAny<Stream>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync($"quiz-images/{fileName}");
 
         return new FormFile(stream, 0, stream.Length, "test_file", fileName);
     }

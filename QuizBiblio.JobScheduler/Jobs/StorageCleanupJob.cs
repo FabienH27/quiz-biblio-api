@@ -2,17 +2,12 @@
 
 namespace QuizBiblio.JobScheduler.Jobs;
 
-public class StorageCleanupJob
+public class StorageCleanupJob(IImageStorageService imageStorageService)
 {
-    private IImageStorageService _imageStorageService;
+    private readonly IImageStorageService _imageStorageService = imageStorageService;
 
-    public StorageCleanupJob(IImageStorageService imageStorageService)
+    public async Task PerformCleanup()
     {
-        _imageStorageService = imageStorageService;
-    }
-
-    public async Task<bool> PerformCleanup()
-    {
-        return await _imageStorageService.DeleteTemporaryImages();
+        await _imageStorageService.DeleteTemporaryImages();
     }
 }
