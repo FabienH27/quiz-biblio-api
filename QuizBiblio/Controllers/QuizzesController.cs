@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using QuizBiblio.ClaimsHelper;
 using QuizBiblio.Models.Quiz;
+using QuizBiblio.Models.Rbac;
 using QuizBiblio.Services.Quiz;
 using QuizBiblio.Services.Utils;
 
@@ -33,7 +34,6 @@ public class QuizzesController(IQuizService quizService) : ControllerBase
         return await quizService.GetByIdAsync(quizId);
     }
 
-    //TODO: Make it admin accessible only
     /// <summary>
     /// Get quizzes for a specific user
     /// </summary>

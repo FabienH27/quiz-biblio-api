@@ -1,6 +1,6 @@
 ﻿using QuizBiblio.Infrastructure.Configuration;
 
-namespace QuizBiblio.IntegrationTests;
+namespace QuizBiblio.IntegrationTests.FakeServices;
 
 public class FakeDatabaseConfigurationProvider(string connectionString, string databaseName) : IDatabaseConfigurationProvider
 {

@@ -21,12 +21,13 @@ public class QuizApiTests : IAsyncLifetime
         .WithWaitStrategy(Wait.ForUnixContainer().UntilPortIsAvailable(27017))
         .Build();
 
-    internal WebApplicationFactory<Program> Factory { get; private set; } = null!;
     public IServiceProvider Services => Factory.Services;
 
     public required IMongoDbContext _dbContext;
 
     public IMongoCollection<QuizEntity> Quizzes => _dbContext.GetCollection<QuizEntity>("Quizzes");
+
+    internal QuizBiblioApplicationFactory Factory { get; private set; } = null!;
 
     public async Task InitializeAsync()
     {

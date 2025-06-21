@@ -8,9 +8,9 @@ namespace QuizBiblio.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize(Roles = "ADMIN")]
 public class UsersController(IUserService userService) : ControllerBase
 {
-
     /// <summary>
     /// Gets users
     /// </summary>
