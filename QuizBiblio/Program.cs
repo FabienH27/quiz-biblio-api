@@ -98,6 +98,7 @@ services.AddAuthentication(options =>
         ValidateLifetime = true,
         ClockSkew = TimeSpan.Zero,
     };
+    //reads the token in the cookie instead of the Authorization header
     options.Events = new JwtBearerEvents
     {
         OnMessageReceived = context =>

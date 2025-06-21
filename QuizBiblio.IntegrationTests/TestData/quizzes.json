@@ -33,5 +33,39 @@
       "id": "67dd4811d01ac7caa036ffe2",
       "name": "FabienH"
     }
+  },
+  {
+    "id": "67dd6f4e9a458024c706abc9",
+    "title": "Quiz Test 2",
+    "themes": [
+      "dotnet"
+    ],
+    "questions": [
+      {
+        "text": "Question 1",
+        "details": "Description 1",
+        "correctProposalIds": [
+          0
+        ],
+        "proposals": [
+          {
+            "text": "Proposal 1"
+          },
+          {
+            "text": "Proposal 2"
+          },
+          {
+            "text": "Proposal 3"
+          },
+          {
+            "text": "Proposal 4"
+          }
+        ]
+      }
+    ],
+    "creator": {
+      "id": "67dd4811d01ac7caa036ffe2",
+      "name": "FabienH"
+    }
   }
 ]

@@ -1,9 +1,7 @@
 ﻿using Google.Api.Gax;
-using Google.Apis.Upload;
-using Google.Cloud.Storage.V1;
 using QuizBiblio.Infrastructure.Storage;
 
-namespace QuizBiblio.IntegrationTests;
+namespace QuizBiblio.IntegrationTests.FakeServices;
 
 public class FakeStorageClientWrapper : IStorageClientWrapper
 {
