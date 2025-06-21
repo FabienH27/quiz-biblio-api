@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using QuizBiblio.DataAccess;
+using QuizBiblio.Infrastructure.Storage;
 using QuizBiblio.Services.Guest;
 using QuizBiblio.Services.ImageStorage;
 using QuizBiblio.Services.Quiz;
@@ -22,6 +23,8 @@ public static class Startup
         services.AddScoped<IGuestSessionService, GuestSessionService>();
         
         services.AddScoped<IThemeService, ThemeService>();
+
+        services.AddScoped<ICloudStorageService, CloudStorageService>();
 
         services.AddScoped<IImageStorageService, ImageStorageService>();
         

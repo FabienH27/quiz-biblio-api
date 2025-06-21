@@ -36,7 +36,7 @@ public class ImageStorageController : ControllerBase
         }catch(GoogleApiException ex)
         {
             return BadRequest($"Could not upload image to bucket: {ex.Message}");
-        }catch(ImageUploadExcention uploadEx)
+        }catch(ImageUploadException uploadEx)
         {
             return BadRequest($"An error occured while uploading image : {uploadEx.Message}");
         }

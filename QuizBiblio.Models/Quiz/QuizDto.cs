@@ -12,7 +12,7 @@ public class QuizDto
 
     public string? ImageId { get; set; }
 
-    public List<Question> Questions { get; set; } = [];
+    public IEnumerable<Question> Questions { get; set; } = [];
 
     public required QuizCreator Creator { get; set; }
 }

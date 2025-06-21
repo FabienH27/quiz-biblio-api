@@ -1,38 +1,40 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.Extensions.Options;
 using QuizBiblio.DataAccess.ImageStorage;
+using QuizBiblio.DataAccess.Utils;
+using QuizBiblio.Infrastructure.Storage;
 using QuizBiblio.Models.Image;
+using QuizBiblio.Models.Settings;
 using QuizBiblio.Services.Exceptions;
 
 namespace QuizBiblio.Services.ImageStorage;
 
-public class ImageStorageService : IImageStorageService
+public class ImageStorageService(IImageStorageRepository imageStorageRepository, ICloudStorageService cloudStorageService, IOptions<BucketSettings> bucketSettings) : IImageStorageService
 {
+    private readonly IImageStorageRepository _imageStorageRepository = imageStorageRepository;
 
-    private readonly IImageStorageRepository _imageStorageRepository;
-
-    public ImageStorageService(IImageStorageRepository imageStorageRepository)
-    {
-        _imageStorageRepository = imageStorageRepository;
-    }
+    private readonly ICloudStorageService _cloudStorageService = cloudStorageService;
+    
+    private readonly BucketSettings _bucketSettings = bucketSettings.Value;
 
     /// <summary>
     /// Uploads an image to temporary folder
     /// </summary>
     /// <param name="file">fiile data to upload</param>
     /// <returns>image id and url</returns>
-    /// <exception cref="ImageUploadExcention">exception thrown in case of invalid data</exception>
+    /// <exception cref="ImageUploadException">exception thrown in case of invalid data</exception>
     public async Task<UploadResult> UploadImageAsync(IFormFile file)
     {
         if (file == null || file.Length == 0)
         {
-            throw new ImageUploadExcention("No file uploaded.");
+            throw new ImageUploadException("No file uploaded.");
         }
 
         var provider = new FileExtensionContentTypeProvider();
         if (!provider.TryGetContentType(file.FileName, out var contentType))
         {
-            throw new ImageUploadExcention("Could not determine file type.");
+            throw new ImageUploadException("Could not determine file type.");
         }
 
         var allowedExtensions = new HashSet<string> { ".png", ".jpg", ".jpeg", ".webp" };
@@ -40,15 +42,22 @@ public class ImageStorageService : IImageStorageService
 
         if (!allowedExtensions.Contains(fileExtension) || !contentType.StartsWith("image/"))
         {
-            throw new ImageUploadExcention("Invalid file type. Only images are allowed.");
+            throw new ImageUploadException("Invalid file type. Only images are allowed.");
         }
 
         if (file.Length > 5 * 1024 * 1024)
         {
-            throw new ImageUploadExcention("File exceeds the 5MB limit.");
+            throw new ImageUploadException("File exceeds the 5MB limit.");
         }
 
-        return await _imageStorageRepository.UploadImageAsync(file, contentType);
+        using var stream = file.OpenReadStream();
+
+        var uniqueFileName = Guid.NewGuid();
+        var fileName = $"{uniqueFileName}{fileExtension}";
+
+        var storageLocation = await _cloudStorageService.SaveFileAsync(stream, fileName, contentType);
+
+        return await _imageStorageRepository.SaveImageAsync(storageLocation);
     }
 
     /// <summary>
@@ -58,7 +67,16 @@ public class ImageStorageService : IImageStorageService
     /// <returns></returns>
     public async Task MoveImageToAssetsAsync(string imageId)
     {
-        await _imageStorageRepository.MoveImageToAssets(imageId);
+        var image = await _imageStorageRepository.GetImageAsync(imageId);
+
+        var imagePath = await _cloudStorageService.MoveImageToAssetsAsync(image);
+
+        string resizedImageUrl = ImageHelper.GetResizedUrl(imagePath, _bucketSettings.ResizedImageWidth);
+
+        image.ResizedUrl = resizedImageUrl;
+        image.OriginalUrl = imagePath;
+
+        await _imageStorageRepository.MoveImageToAssetsAsync(image);
     }
 
     /// <summary>
@@ -81,9 +99,8 @@ public class ImageStorageService : IImageStorageService
     /// <summary>
     /// Deletes temporary images
     /// </summary>
-    /// <returns>whether images were successfully deleted</returns>
-    public async Task<bool> DeleteTemporaryImages()
+    public async Task DeleteTemporaryImages()
     {
-        return await _imageStorageRepository.DeleteTemporaryImages();
+        await _imageStorageRepository.DeleteTemporaryImages();
     }
 }

@@ -1,21 +1,21 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using QuizBiblio.Services;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using Microsoft.OpenApi.Models;
-using QuizBiblio.Models.Rbac;
-using System.IdentityModel.Tokens.Jwt;
-using MongoDB.Driver;
-using QuizBiblio.DataAccess.QbDbContext;
-using Google.Cloud.Storage.V1;
-using QuizBiblio.Models.DatabaseSettings;
-using QuizBiblio.Models.Settings;
-using QuizBiblio.Helper;
 using Hangfire;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using MongoDB.Driver;
+using QuizBiblio;
+using QuizBiblio.DataAccess.QbDbContext;
+using QuizBiblio.Infrastructure.Configuration;
+using QuizBiblio.Infrastructure.Storage;
 using QuizBiblio.JobScheduler;
 using QuizBiblio.JobScheduler.Authorization;
 using QuizBiblio.Middleware;
-using QuizBiblio;
+using QuizBiblio.Models.DatabaseSettings;
+using QuizBiblio.Models.Rbac;
+using QuizBiblio.Models.Settings;
+using QuizBiblio.Services;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,38 +27,42 @@ var configuration = builder.Configuration;
 
 string? dbName = configuration.GetValue<string>("QuizStoreDatabase:DatabaseName");
 
+services.Configure<QuizStoreDatabaseSettings>(
+    configuration.GetSection("QuizStoreDatabase"));
+
+var jwtSettings = configuration.GetSection("JwtSettings");
+var secretKey = jwtSettings["Secret"];
+services.Configure<JwtSettings>(jwtSettings);
+
 //Google Storage Client Settings
 var bucketSettings = configuration.GetSection("BucketSettings");
 services.Configure<BucketSettings>(bucketSettings);
 
-services.AddSingleton(await StorageClient.CreateAsync());
+services.AddSingleton<IStorageClientWrapper, StorageClientWrapper>();
+services.AddSingleton<IDatabaseConfigurationProvider, DefaultDatabaseConfigurationProvider>();
 
 // MongoDB Settings
-var connectionString = SecretManagerHelper.GetConnectionStringFromSecretManager("quiz-database-connection");
-
-if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
+services.AddSingleton<IMongoClient>(provider =>
 {
-    connectionString = configuration.GetConnectionString("QuizStoreDatabase");
-}
+    var configProvider = provider.GetRequiredService<IDatabaseConfigurationProvider>();
+    var connectionString = configProvider.GetConnectionString();
 
-var settings = MongoClientSettings.FromConnectionString(connectionString);
-settings.SslSettings = new SslSettings() { EnabledSslProtocols = System.Security.Authentication.SslProtocols.Tls12 };
-services.AddSingleton<IMongoClient>(new MongoClient(settings));
+    var mongoSettings = MongoClientSettings.FromConnectionString(connectionString);
+    mongoSettings.SslSettings = new SslSettings
+    {
+        EnabledSslProtocols = System.Security.Authentication.SslProtocols.Tls12
+    };
+
+    return new MongoClient(mongoSettings);
+});
 
 services.AddSingleton<IMongoDbContext, MongoDbContext>();
 
-if(connectionString != null && dbName != null)
-{
-    services.AddJobScheduler(connectionString,dbName);
-}
+services.AddScoped<ICloudStorageService, CloudStorageService>();
+
+services.AddJobScheduler();
 
 // JWT settings
-var jwtSettings = configuration.GetSection("JwtSettings");
-var secretKey = jwtSettings["Secret"];
-
-services.Configure<QuizStoreDatabaseSettings>(
-    configuration.GetSection("QuizStoreDatabase"));
-services.Configure<JwtSettings>(jwtSettings);
 services.Configure<List<Role>>(configuration.GetSection("Roles"));
 
 //cors policy
@@ -108,7 +112,6 @@ services.AddAuthentication(options =>
         }
     };
 });
-
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 services.AddEndpointsApiExplorer();
