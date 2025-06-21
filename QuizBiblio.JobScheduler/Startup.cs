@@ -3,29 +3,36 @@ using Hangfire.Mongo;
 using Hangfire.Mongo.Migration.Strategies;
 using Hangfire.Mongo.Migration.Strategies.Backup;
 using Microsoft.Extensions.DependencyInjection;
+using QuizBiblio.Infrastructure.Configuration;
 
 namespace QuizBiblio.JobScheduler;
 
 public static class Startup
 {
-    public static IServiceCollection AddJobScheduler(this IServiceCollection services, string connectionString, string databaseName)
+    public static IServiceCollection AddJobScheduler(this IServiceCollection services)
     {
-        var options = new MongoStorageOptions
+        services.AddHangfire((provider, config) =>
         {
-            MigrationOptions = new MongoMigrationOptions
-            {
-                MigrationStrategy = new DropMongoMigrationStrategy(),
-                BackupStrategy = new NoneMongoBackupStrategy()
-            },
-            CheckConnection = true
-        };
+            var configurationProvider = provider.GetRequiredService<IDatabaseConfigurationProvider>();
 
-        services.AddHangfire(configuration => configuration
-            .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
-            .UseSimpleAssemblyNameTypeSerializer()
-            .UseRecommendedSerializerSettings()
-            .UseMongoStorage(connectionString, databaseName, options)
-        );
+            var connectionString = configurationProvider.GetConnectionString();
+            var dbName = configurationProvider.GetDatabaseName();
+
+            var options = new MongoStorageOptions
+            {
+                MigrationOptions = new MongoMigrationOptions
+                {
+                    MigrationStrategy = new DropMongoMigrationStrategy(),
+                    BackupStrategy = new NoneMongoBackupStrategy()
+                },
+                CheckConnection = true
+            };
+
+            config.SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+                  .UseSimpleAssemblyNameTypeSerializer()
+                  .UseRecommendedSerializerSettings()
+                  .UseMongoStorage(connectionString, dbName, options);
+        });
 
         services.AddHangfireServer(serverOptions =>
         {
@@ -33,5 +40,6 @@ public static class Startup
         });
 
         return services;
+
     }
 }

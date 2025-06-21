@@ -3,28 +3,20 @@ using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Options;
 using QuizBiblio.DataAccess.ImageStorage;
 using QuizBiblio.DataAccess.Utils;
+using QuizBiblio.Infrastructure.Storage;
 using QuizBiblio.Models.Image;
 using QuizBiblio.Models.Settings;
-using QuizBiblio.Services.CloudStorage;
 using QuizBiblio.Services.Exceptions;
 
 namespace QuizBiblio.Services.ImageStorage;
 
-public class ImageStorageService : IImageStorageService
+public class ImageStorageService(IImageStorageRepository imageStorageRepository, ICloudStorageService cloudStorageService, IOptions<BucketSettings> bucketSettings) : IImageStorageService
 {
-    private readonly IImageStorageRepository _imageStorageRepository;
+    private readonly IImageStorageRepository _imageStorageRepository = imageStorageRepository;
 
-    private readonly ICloudStorageService _cloudStorageService;
+    private readonly ICloudStorageService _cloudStorageService = cloudStorageService;
     
-    private readonly BucketSettings _bucketSettings;
-
-    public ImageStorageService(IImageStorageRepository imageStorageRepository, ICloudStorageService cloudStorageService, IOptions<BucketSettings> bucketSettings)
-    {
-        _imageStorageRepository = imageStorageRepository;
-        _cloudStorageService = cloudStorageService;
-        
-        _bucketSettings = bucketSettings.Value;
-    }
+    private readonly BucketSettings _bucketSettings = bucketSettings.Value;
 
     /// <summary>
     /// Uploads an image to temporary folder

@@ -19,6 +19,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{02EA681E
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuizBiblio.IntegrationTests", "QuizBiblio.IntegrationTests\QuizBiblio.IntegrationTests.csproj", "{F69CED55-36F1-4685-A5CC-02F4727B5013}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuizBiblio.Infrastructure", "QuizBiblio.Infrastructure\QuizBiblio.Infrastructure.csproj", "{ACC57212-7F0A-454B-9F9D-6132DEA5CA32}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +55,10 @@ Global
 		{F69CED55-36F1-4685-A5CC-02F4727B5013}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F69CED55-36F1-4685-A5CC-02F4727B5013}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F69CED55-36F1-4685-A5CC-02F4727B5013}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ACC57212-7F0A-454B-9F9D-6132DEA5CA32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ACC57212-7F0A-454B-9F9D-6132DEA5CA32}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ACC57212-7F0A-454B-9F9D-6132DEA5CA32}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ACC57212-7F0A-454B-9F9D-6132DEA5CA32}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

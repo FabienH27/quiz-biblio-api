@@ -1,6 +1,5 @@
 ﻿using FluentAssertions;
 using MongoDB.Bson;
-using QuizBiblio.DataAccess.QbDbContext;
 using QuizBiblio.Models.Quiz;
 using QuizBiblio.IntegrationTests.JsonParser;
 
@@ -8,10 +7,7 @@ namespace QuizBiblio.IntegrationTests.Quizzes;
 
 public class GetQuizByIdTests(QuizApiTests setup) : IClassFixture<QuizApiTests>
 {
-    private readonly IMongoDbContext _dbContext = setup._dbContext;
     private readonly HttpClient _client = setup.Factory.CreateClient();
-
-    //TODO: Logout of gcloud locally and try running test again
 
     [Fact]
     public async Task ShouldReturnQuizById()

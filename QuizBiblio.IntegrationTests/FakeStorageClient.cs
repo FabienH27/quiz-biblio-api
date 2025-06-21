@@ -1,7 +1,7 @@
 ﻿using Google.Api.Gax;
 using Google.Apis.Upload;
 using Google.Cloud.Storage.V1;
-using QuizBiblio.Services.CloudStorage;
+using QuizBiblio.Infrastructure.Storage;
 
 namespace QuizBiblio.IntegrationTests;
 

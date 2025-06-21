@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 
-namespace QuizBiblio.Helper;
+namespace QuizBiblio.ClaimsHelper;
 
 public static class ClaimsHelper
 {

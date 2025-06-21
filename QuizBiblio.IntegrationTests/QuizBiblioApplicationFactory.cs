@@ -1,11 +1,14 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using Hangfire;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using MongoDB.Driver;
+using Moq;
 using QuizBiblio.DataAccess.QbDbContext;
-using QuizBiblio.Services.CloudStorage;
+using QuizBiblio.Infrastructure.Configuration;
+using QuizBiblio.Infrastructure.Storage;
 
 namespace QuizBiblio.IntegrationTests;
 
@@ -33,6 +36,12 @@ internal class QuizBiblioApplicationFactory(string connectionString, string data
             services.RemoveAll<IMongoClient>();
             services.RemoveAll<IMongoDbContext>();
             services.RemoveAll<IStorageClientWrapper>();
+            services.RemoveAll<IDatabaseConfigurationProvider>();
+
+            DisableRecurringJobs(services);
+
+            services.AddSingleton<IDatabaseConfigurationProvider>(
+                new FakeDatabaseConfigurationProvider(_connectionString, _databaseName));
 
             var mongoClientSettings = MongoClientSettings.FromConnectionString(_connectionString);
             mongoClientSettings.SslSettings = new SslSettings
@@ -51,4 +60,15 @@ internal class QuizBiblioApplicationFactory(string connectionString, string data
         });
     }
 
+    private void DisableRecurringJobs(IServiceCollection services)
+    {
+        services.RemoveAll<IBackgroundJobClient>();
+        services.RemoveAll<IRecurringJobManager>();
+        services.RemoveAll<JobStorage>();
+        services.RemoveAll<BackgroundJobServer>();
+        var backgroundJobClientMock = new Mock<IBackgroundJobClient>();
+        var jobStorageMock = new Mock<JobStorage>();
+        services.AddSingleton(backgroundJobClientMock.Object);
+        services.AddSingleton(jobStorageMock.Object);
+    }
 }

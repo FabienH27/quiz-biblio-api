@@ -7,7 +7,7 @@ using QuizBiblio.Models.Settings;
 using GAS = Google.Apis.Storage.v1.Data;
 
 
-namespace QuizBiblio.Services.CloudStorage;
+namespace QuizBiblio.Infrastructure.Storage;
 
 public class CloudStorageService : ICloudStorageService
 {
@@ -20,7 +20,6 @@ public class CloudStorageService : ICloudStorageService
     private readonly string _tempLocation;
 
     private readonly IStorageClientWrapper _client;
-
 
     public CloudStorageService(IOptions<BucketSettings> bucketSettings, IStorageClientWrapper client, ILogger<CloudStorageService> logger)
     {

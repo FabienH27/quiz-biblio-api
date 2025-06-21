@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using QuizBiblio.DataAccess;
-using QuizBiblio.Services.CloudStorage;
+using QuizBiblio.Infrastructure.Storage;
 using QuizBiblio.Services.Guest;
 using QuizBiblio.Services.ImageStorage;
 using QuizBiblio.Services.Quiz;

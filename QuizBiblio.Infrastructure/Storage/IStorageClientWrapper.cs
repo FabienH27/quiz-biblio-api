@@ -1,7 +1,7 @@
 ﻿using Google.Api.Gax;
 using GAS = Google.Apis.Storage.v1.Data;
 
-namespace QuizBiblio.Services.CloudStorage;
+namespace QuizBiblio.Infrastructure.Storage;
 
 public interface IStorageClientWrapper
 {

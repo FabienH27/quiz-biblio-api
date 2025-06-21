@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using MongoDB.Bson;
-using MongoDB.Driver;
+﻿using MongoDB.Driver;
 using QuizBiblio.DataAccess.QbDbContext;
 using QuizBiblio.Models;
 

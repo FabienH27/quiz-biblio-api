@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using QuizBiblio.Models.Image;
+﻿using QuizBiblio.Models.Image;
 
 namespace QuizBiblio.DataAccess.ImageStorage;
 

@@ -2,8 +2,8 @@
 using Microsoft.Extensions.Options;
 using Moq;
 using QuizBiblio.DataAccess.ImageStorage;
+using QuizBiblio.Infrastructure.Storage;
 using QuizBiblio.Models.Settings;
-using QuizBiblio.Services.CloudStorage;
 using QuizBiblio.Services.Exceptions;
 using QuizBiblio.Services.ImageStorage;
 
@@ -15,7 +15,7 @@ public class ImageUploadTests
     private readonly Mock<IImageStorageRepository> _imageStorageRepositoryMock;
     private readonly Mock<ICloudStorageService> _cloudStorageServiceMock;
 
-    IOptions<BucketSettings> _bucketSettings = Options.Create<BucketSettings>(new BucketSettings() { Name = "test", QuizImageAssetsLocation = "assets/", ResizedImageWidth = 800, TemporaryImageLocation = "temp/" });
+    private readonly IOptions<BucketSettings> _bucketSettings = Options.Create<BucketSettings>(new BucketSettings() { Name = "test", QuizImageAssetsLocation = "assets/", ResizedImageWidth = 800, TemporaryImageLocation = "temp/" });
 
     public ImageUploadTests()
     {

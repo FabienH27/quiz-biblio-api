@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using QuizBiblio.Helper;
+using QuizBiblio.ClaimsHelper;
 using QuizBiblio.Models.Quiz;
 using QuizBiblio.Services.Quiz;
 using QuizBiblio.Services.Utils;

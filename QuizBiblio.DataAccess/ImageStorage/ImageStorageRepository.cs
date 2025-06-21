@@ -10,11 +10,9 @@ namespace QuizBiblio.DataAccess.ImageStorage;
 
 public class ImageStorageRepository : IImageStorageRepository
 {
-
     private readonly ILogger<ImageStorageRepository> _logger;
     private readonly IMongoDbContext _dbContext;
 
-    //private readonly StorageClient _storageClient;
     private readonly BucketSettings _bucketSettings;
 
     private readonly string _tempLocation;
@@ -23,7 +21,6 @@ public class ImageStorageRepository : IImageStorageRepository
 
     public ImageStorageRepository(ILogger<ImageStorageRepository> logger,
         IMongoDbContext dbContext,
-        //StorageClient storageClient, 
         IOptions<BucketSettings> bucketSettings)
     {
         _logger = logger;

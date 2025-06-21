@@ -2,7 +2,7 @@
 using QuizBiblio.Models.Image;
 using GAS = Google.Apis.Storage.v1.Data;
 
-namespace QuizBiblio.Services.CloudStorage;
+namespace QuizBiblio.Infrastructure.Storage;
 
 public interface ICloudStorageService
 {
