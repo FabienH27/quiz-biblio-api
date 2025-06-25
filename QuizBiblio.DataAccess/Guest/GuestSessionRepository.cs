@@ -43,7 +43,7 @@ public class GuestSessionRepository : IGuestSessionRepository
 
         var updateRequest = await GuestSession.UpdateOneAsync(filter, update);
 
-        return updateRequest.IsAcknowledged;
+        return updateRequest.ModifiedCount == 1;
     }
 
     public async Task<GuestSession> GetGuestSessionAsync(string guestId)

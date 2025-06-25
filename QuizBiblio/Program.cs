@@ -34,6 +34,8 @@ var jwtSettings = configuration.GetSection("JwtSettings");
 var secretKey = jwtSettings["Secret"];
 services.Configure<JwtSettings>(jwtSettings);
 
+services.Configure<CookieSettings>(builder.Configuration.GetSection("Cookie"));
+
 //Google Storage Client Settings
 var bucketSettings = configuration.GetSection("BucketSettings");
 services.Configure<BucketSettings>(bucketSettings);

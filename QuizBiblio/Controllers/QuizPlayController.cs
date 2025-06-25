@@ -39,9 +39,9 @@ public class QuizPlayController : ControllerBase
 
             if (guestId != null)
             {
-                await _guestSessionService.SaveGuestAnswersAsync(guestId, quizAnswers.Answers);
+                var operationResult = await _guestSessionService.SaveGuestAnswersAsync(guestId, quizAnswers.Answers);
 
-                return Ok();
+                return Ok(operationResult);
             }
         }
         return BadRequest();

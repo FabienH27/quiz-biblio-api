@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using QuizBiblio.Services.Guest;
 
 namespace QuizBiblio.Controllers;
@@ -9,11 +10,13 @@ public class GuestController : ControllerBase
 {
     private readonly IGuestSessionService _guestSessionService;
     private readonly ILogger<GuestController> _logger;
+    private readonly CookieSettings _cookieSettings;
 
-    public GuestController(IGuestSessionService guestSessionService, ILogger<GuestController> logger)
+    public GuestController(IGuestSessionService guestSessionService, ILogger<GuestController> logger, IOptions<CookieSettings> options)
     {
         _guestSessionService = guestSessionService;
         _logger = logger;
+        _cookieSettings = options.Value;
     }
 
     [HttpPost("init-session")]
@@ -24,10 +27,15 @@ public class GuestController : ControllerBase
         var cookieOptions = new CookieOptions
         {
             HttpOnly = true,
-            Secure = true,
-            SameSite = SameSiteMode.None,
+            Secure = _cookieSettings.Secure,
+            SameSite = _cookieSettings.SameSite switch
+            {
+                "Lax" => SameSiteMode.Lax,
+                "Strict" => SameSiteMode.Strict,
+                _ => SameSiteMode.None
+            },
             MaxAge = TimeSpan.FromDays(1),
-            Path = "/"
+            Path = "/"  
         };
 
         Response.Cookies.Append("guestId", guestSessionId, cookieOptions);
