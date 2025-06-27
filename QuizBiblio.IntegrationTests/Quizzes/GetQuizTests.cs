@@ -7,7 +7,7 @@ namespace QuizBiblio.IntegrationTests.Quizzes;
 
 public class GetQuizTests(QuizApiTests setup) : IClassFixture<QuizApiTests>
 {
-    private readonly HttpClient _client = setup.Factory.CreateClient();
+    private readonly HttpClient _guestClient = setup.Factory.GetUnauthorizedClient();
 
     [Fact]
     public async Task ShouldReturnQuizById()
@@ -16,7 +16,7 @@ public class GetQuizTests(QuizApiTests setup) : IClassFixture<QuizApiTests>
         var quizId = new ObjectId("67dd6f4e9a458024c706abc8");
 
         // Act
-        var response = await _client.GetAsync($"/api/quizzes/{quizId}");
+        var response = await _guestClient.GetAsync($"/api/quizzes/{quizId}");
 
         // Assert
         response.EnsureSuccessStatusCode();
@@ -34,7 +34,7 @@ public class GetQuizTests(QuizApiTests setup) : IClassFixture<QuizApiTests>
     public async Task ShouldReturnAllQuizzes()
     {
         //Act
-        var response = await _client.GetAsync("/api/quizzes");
+        var response = await _guestClient.GetAsync("/api/quizzes");
 
         response.EnsureSuccessStatusCode();
 
