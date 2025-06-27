@@ -16,10 +16,7 @@ public class UsersController(IUserService userService) : ControllerBase
     /// </summary>
     /// <returns></returns>
     [HttpGet]
-    public Task<List<UserEntity>> GetUsers()
-    {
-        return userService.GetUsers();
-    }
+    public Task<List<UserEntity>> GetUsersAsync() => userService.GetUsersAsync();
 
     /// <summary>
     /// Get a specific user
@@ -27,10 +24,7 @@ public class UsersController(IUserService userService) : ControllerBase
     /// <param name="id">id of the user to get</param>
     /// <returns></returns>
     [HttpGet("{id:length(24)}")]
-    public Task<UserEntity?> GetUser(string id)
-    {
-        return userService.GetUser(id);
-    }
+    public Task<UserEntity?> GetUser(string id) => userService.GetUserAsync(id);
 
     /// <summary>
     /// Get role from authenticated user
@@ -51,10 +45,19 @@ public class UsersController(IUserService userService) : ControllerBase
     /// <param name="user"></param>
     /// <returns></returns>
     [HttpPost]
-    public ActionResult<UserEntity> Create(UserEntity user)
+    public async Task<ActionResult<UserEntity>> Create(UserEntity user)
     {
-        userService.CreateAsync(user);
+        await userService.CreateAsync(user);
 
         return user;
+    }
+
+
+    [HttpPatch("grant-access")]
+    public async Task<IActionResult> GrantAccess(string userId)
+    {
+        await userService.GrantAccess(userId);
+
+        return Ok(new { message = "Access granted to user"});
     }
 }
