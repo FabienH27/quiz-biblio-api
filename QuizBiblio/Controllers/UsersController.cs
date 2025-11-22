@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using QuizBiblio.Models;
-using QuizBiblio.Services.User;
+using QuizBiblio.Models.Users;
+using QuizBiblio.Services.Users;
 using System.Security.Claims;
 
 namespace QuizBiblio.Controllers;
@@ -9,16 +10,17 @@ namespace QuizBiblio.Controllers;
 [Route("api/[controller]")]
 [ApiController]
 [Authorize(Roles = "ADMIN")]
-public class UsersController(IUserService userService) : ControllerBase
+public class UsersController(IUserService userService, IMapper mapper) : ControllerBase
 {
     /// <summary>
-    /// Gets users
+    /// Get users
     /// </summary>
     /// <returns></returns>
     [HttpGet]
-    public Task<List<UserEntity>> GetUsers()
+    public async Task<List<UserDto>> GetUsers()
     {
-        return userService.GetUsers();
+        var users = await userService.GetUsers();
+        return mapper.Map<List<UserDto>>(users);
     }
 
     /// <summary>
@@ -27,9 +29,9 @@ public class UsersController(IUserService userService) : ControllerBase
     /// <param name="id">id of the user to get</param>
     /// <returns></returns>
     [HttpGet("{id:length(24)}")]
-    public Task<UserEntity?> GetUser(string id)
+    public async Task<UserDto?> GetUser(string id)
     {
-        return userService.GetUser(id);
+        return mapper.Map<UserDto?>(await userService.GetUser(id));
     }
 
     /// <summary>

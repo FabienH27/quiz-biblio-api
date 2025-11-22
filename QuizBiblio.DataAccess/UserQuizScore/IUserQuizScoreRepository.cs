@@ -5,7 +5,7 @@ namespace QuizBiblio.DataAccess.UserQuizScore;
 
 public interface IUserQuizScoreRepository
 {
-    public Task<IAsyncCursor<UserScoreWithUserEntity>> GetUserQuizScoresAsync();
+    public Task<IAsyncCursor<UserScoreWithUserEntity>> GetUserQuizScoresAsync(int pageSize);
 
     public Task<GuestScoreResponse> SaveUserScoreAsync(UserQuizScoreEntity userQuizScore);
 

@@ -1,10 +1,10 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using QuizBiblio.DataAccess.Quiz;
 using QuizBiblio.DataAccess.Theme;
-using QuizBiblio.DataAccess.User;
 using QuizBiblio.DataAccess.UserQuizScore;
 using QuizBiblio.DataAccess.ImageStorage;
 using QuizBiblio.DataAccess.Guest;
+using QuizBiblio.DataAccess.Users;
 
 namespace QuizBiblio.DataAccess;
 public static class Startup

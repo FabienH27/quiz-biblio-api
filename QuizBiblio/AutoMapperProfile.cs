@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using QuizBiblio.Models.UserQuizScore;
+using QuizBiblio.Models.Users;
 
 namespace QuizBiblio;
 
@@ -9,5 +10,7 @@ public class AutoMapperProfile : Profile
     {
         CreateMap<AnswerRequest, AnswerDto>();
         CreateMap<QuizAnswersRequest, QuizAnswerDto>();
+        CreateMap<UserEntity, User>();
+        CreateMap<User, UserDto>();
     }
 }

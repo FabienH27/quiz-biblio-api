@@ -5,8 +5,8 @@ using QuizBiblio.Services.Guest;
 using QuizBiblio.Services.ImageStorage;
 using QuizBiblio.Services.Quiz;
 using QuizBiblio.Services.Theme;
-using QuizBiblio.Services.User;
 using QuizBiblio.Services.UserQuizScore;
+using QuizBiblio.Services.Users;
 
 namespace QuizBiblio.Services;
 public static class Startup

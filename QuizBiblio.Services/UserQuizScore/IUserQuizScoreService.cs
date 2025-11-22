@@ -4,7 +4,7 @@ namespace QuizBiblio.Services.UserQuizScore;
 
 public interface IUserQuizScoreService
 {
-    public Task<List<UserScoreWithUserEntity>> GetUserQuizScores();
+    public Task<List<UserScoreWithUserEntity>> GetUserQuizScores(int pageSize);
 
     public Task<GuestScoreResponse> SaveUserScoreAsync(string userId, IEnumerable<AnswerDto> answers);
 

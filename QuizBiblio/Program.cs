@@ -1,6 +1,8 @@
 using Hangfire;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi;
 using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
 using QuizBiblio;
@@ -25,6 +27,7 @@ JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); // Avoid renaming cl
 var services = builder.Services;
 var configuration = builder.Configuration;
 
+//db settings
 string? dbName = configuration.GetValue<string>("QuizStoreDatabase:DatabaseName");
 
 services.Configure<QuizStoreDatabaseSettings>(
@@ -65,7 +68,7 @@ services.AddScoped<ICloudStorageService, CloudStorageService>();
 services.AddJobScheduler();
 
 // JWT settings
-services.Configure<List<Role>>(configuration.GetSection("Roles"));
+services.Configure<List<RbacRole>>(configuration.GetSection("Roles"));
 
 //cors policy
 string CORSOpenPolicy = "OpenCORSPolicy";
@@ -128,7 +131,7 @@ services.AddSwaggerGen(options =>
         Scheme = "Bearer"
     });
 
-    options.AddSecurityRequirement(new OpenApiSecurityRequirement()
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
             new OpenApiSecurityScheme

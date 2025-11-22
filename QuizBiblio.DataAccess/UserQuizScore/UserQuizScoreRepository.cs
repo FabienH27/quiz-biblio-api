@@ -1,8 +1,8 @@
 ﻿using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using QuizBiblio.DataAccess.QbDbContext;
-using QuizBiblio.Models;
 using QuizBiblio.Models.UserQuizScore;
+using QuizBiblio.Models.Users;
 
 namespace QuizBiblio.DataAccess.UserQuizScore;
 
@@ -21,7 +21,7 @@ public class UserQuizScoreRepository : IUserQuizScoreRepository
         _dbContext = dbContext;
     }
 
-    public async Task<IAsyncCursor<UserScoreWithUserEntity>> GetUserQuizScoresAsync()
+    public async Task<IAsyncCursor<UserScoreWithUserEntity>> GetUserQuizScoresAsync(int pageSize)
     {
         return await (from quizScore in UserQuizScores.AsQueryable()
                       join user in Users.AsQueryable()
@@ -31,9 +31,10 @@ public class UserQuizScoreRepository : IUserQuizScoreRepository
                           UserId = user.Id,
                           UserName = user.Username,
                           Score = quizScore.Score,
+                          Role = user.Role
                       })
                       .OrderByDescending(data => data.Score)
-                      .Take(10)
+                      .Take(pageSize)
                       .ToCursorAsync();
     }
 
