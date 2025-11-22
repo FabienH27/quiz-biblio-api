@@ -1,11 +1,10 @@
 ﻿using MongoDB.Bson;
-using QuizBiblio.Models;
+using QuizBiblio.Models.Users;
 
-namespace QuizBiblio.Services.User;
+namespace QuizBiblio.DataAccess.Users;
 
-public interface IUserService
+public interface IUserRepository
 {
-
     /// <summary>
     /// Get all users
     /// </summary>
@@ -15,16 +14,16 @@ public interface IUserService
     /// <summary>
     /// Get a specific user
     /// </summary>
-    /// <param name="id">id of the user to fetch</param>
+    /// <param name="username">username of the user to fetch</param>
     /// <returns>specific user</returns>
     public Task<UserEntity?> GetUser(string id);
 
     /// <summary>
-    /// 
+    /// Get a specific user
     /// </summary>
-    /// <param name="username"></param>
-    /// <returns></returns>
-    public Task<UserEntity?> GetUserFromMail(string username);
+    /// <param name="username">email of the user to fetch</param>
+    /// <returns>specific user</returns>
+    public Task<UserEntity?> GetUserFromMail(string email);
 
     /// <summary>
     /// Create a user

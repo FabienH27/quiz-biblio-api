@@ -2,7 +2,7 @@
 using MongoDB.Bson.Serialization.Attributes;
 using QuizBiblio.Models.Rbac;
 
-namespace QuizBiblio.Models;
+namespace QuizBiblio.Models.Users;
 
 public class UserEntity
 {
@@ -20,5 +20,5 @@ public class UserEntity
     public required string Username { get; set; }
 
     [BsonElement("Role")]
-    public string UserRole { get; set; } = Role.Member.Name;
+    public string Role { get; set; } = RbacRole.Member.Name;
 }

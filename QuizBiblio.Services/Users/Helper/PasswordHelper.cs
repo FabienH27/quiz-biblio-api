@@ -1,4 +1,4 @@
-﻿namespace QuizBiblio.Services.User.Helper;
+﻿namespace QuizBiblio.Services.Users.Helper;
 
 public static class PasswordHelper
 {

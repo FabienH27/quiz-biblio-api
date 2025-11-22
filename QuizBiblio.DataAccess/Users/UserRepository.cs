@@ -1,20 +1,15 @@
 ﻿using MongoDB.Driver;
 using QuizBiblio.DataAccess.QbDbContext;
-using QuizBiblio.Models;
+using QuizBiblio.Models.Users;
 
-namespace QuizBiblio.DataAccess.User;
+namespace QuizBiblio.DataAccess.Users;
 
-public class UserRepository : IUserRepository
+public class UserRepository(IMongoDbContext dbContext) : IUserRepository
 {
 
-    private readonly IMongoDbContext _dbContext;
+    private readonly IMongoDbContext _dbContext = dbContext;
 
     IMongoCollection<UserEntity> Users => _dbContext.GetCollection<UserEntity>("Users");
-
-    public UserRepository(IMongoDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
 
     public async Task<List<UserEntity>> GetUsers() => await Users.Find(_ => true).ToListAsync();
 

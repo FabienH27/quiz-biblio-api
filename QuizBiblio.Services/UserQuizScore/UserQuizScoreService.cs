@@ -13,11 +13,11 @@ public class UserQuizScoreService: IUserQuizScoreService
         _scoreRepository = scoreRepository;
     }
 
-    public async Task<List<UserScoreWithUserEntity>> GetUserQuizScores()
+    public async Task<List<UserScoreWithUserEntity>> GetUserQuizScores(int pageSize)
     {
         var scores = new List<UserScoreWithUserEntity>();
 
-        using var cursor = await _scoreRepository.GetUserQuizScoresAsync();
+        using var cursor = await _scoreRepository.GetUserQuizScoresAsync(pageSize);
 
         while (await cursor.MoveNextAsync())
         {

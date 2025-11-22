@@ -1,6 +1,6 @@
 ﻿namespace QuizBiblio.Models.Rbac;
 
-public sealed class Role(int id, string name)
+public sealed class RbacRole(int id, string name)
 {
     private const string AdminRole = "ADMIN";
     private const string MemberRole = "MEMBER";
@@ -8,10 +8,10 @@ public sealed class Role(int id, string name)
     public const int AdminId = 0;
     public const int MemberId = 1;
 
-    public static readonly Role Member = new(MemberId, MemberRole);
-    public static readonly Role Admin = new(AdminId, AdminRole);
+    public static readonly RbacRole Member = new(MemberId, MemberRole);
+    public static readonly RbacRole Admin = new(AdminId, AdminRole);
 
-    public Role() : this(MemberId, MemberRole) {}
+    public RbacRole() : this(MemberId, MemberRole) {}
 
     private int Id { get; init; } = id;
     public string Name { get; init; } = name;

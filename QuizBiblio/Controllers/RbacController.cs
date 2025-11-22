@@ -8,9 +8,9 @@ namespace QuizBiblio.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize(Roles = "ADMIN")]
-public class RbacController(IOptions<List<Role>> roles) : ControllerBase
+public class RbacController(IOptions<List<RbacRole>> roles) : ControllerBase
 {
-    private readonly List<Role> _roles = roles.Value;
+    private readonly List<RbacRole> _roles = roles.Value;
 
     /// <summary>
     /// Gets roles

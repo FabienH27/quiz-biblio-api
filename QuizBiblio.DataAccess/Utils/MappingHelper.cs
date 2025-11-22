@@ -1,10 +1,6 @@
 ﻿using MongoDB.Driver;
 using QuizBiblio.Models.Quiz;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using QuizBiblio.Models.Users;
 
 namespace QuizBiblio.DataAccess.Utils;
 
@@ -13,7 +9,7 @@ public static class MappingHelper
     /// <summary>
     /// Projects the query to the Dto object. It is the object exposed in the API
     /// </summary>
-    /// <param name="query">query performed</param>
+    /// <param name="query">performed query</param>
     /// <returns>quiz dto object</returns>
     public static IFindFluent<QuizEntity, QuizDto> ProjectToDto(this IFindFluent<QuizEntity, QuizEntity> query)
     {
@@ -32,7 +28,7 @@ public static class MappingHelper
     /// <summary>
     /// Projects the query to the info object. Gets quiz basics information.
     /// </summary>
-    /// <param name="query">query performed</param>
+    /// <param name="query">performed query</param>
     /// <returns>quiz info object</returns>
     public static IFindFluent<QuizEntity, QuizInfo> ProjectToInfo(this IFindFluent<QuizEntity, QuizEntity> query)
     {

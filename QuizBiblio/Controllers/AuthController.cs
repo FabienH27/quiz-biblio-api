@@ -2,12 +2,12 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using QuizBiblio.Models;
 using QuizBiblio.Models.Auth;
 using QuizBiblio.Models.Rbac;
 using QuizBiblio.Models.Settings;
-using QuizBiblio.Services.User;
-using QuizBiblio.Services.User.Helper;
+using QuizBiblio.Models.Users;
+using QuizBiblio.Services.Users;
+using QuizBiblio.Services.Users.Helper;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -56,7 +56,7 @@ public class AuthController : ControllerBase
             
         };
 
-        var token = GenerateJwtToken(user.Id.ToString(), user.Username, user.UserRole);
+        var token = GenerateJwtToken(user.Id.ToString(), user.Username, user.Role);
 
         await _userService.CreateAsync(user);
 
@@ -77,7 +77,7 @@ public class AuthController : ControllerBase
 
         if (user != null && PasswordHelper.VerifyPassword(request.Password, user?.Password ?? ""))
         {
-            var token = GenerateJwtToken(user?.Id.ToString() ?? "", user?.Username ?? "", user?.UserRole ?? Role.Member.Name);
+            var token = GenerateJwtToken(user?.Id.ToString() ?? "", user?.Username ?? "", user?.Role ?? RbacRole.Member.Name);
 
             Response.Cookies.Append(cookieName, token, _cookieOptions);
 
